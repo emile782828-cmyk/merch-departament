@@ -3330,53 +3330,57 @@
         // ========== MATRIX RAIN ==========
         const matrixBg = document.getElementById('matrixBg');
 
-        function createMatrixColumn() {
-            const column = document.createElement('div');
-            column.className = 'matrix-column';
+        if (matrixBg) {
+            function createMatrixColumn() {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
 
-            const rand = Math.random();
-            if (rand > 0.85) column.classList.add('bright');
-            else if (rand < 0.5) column.classList.add('dim');
+                const rand = Math.random();
+                if (rand > 0.85) column.classList.add('bright');
+                else if (rand < 0.5) column.classList.add('dim');
 
-            column.style.left = Math.random() * 100 + '%';
-            column.style.animationDuration = (Math.random() * 15 + 10) + 's';
-            column.style.animationDelay = Math.random() * -25 + 's';
+                column.style.left = Math.random() * 100 + '%';
+                column.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                column.style.animationDelay = Math.random() * -25 + 's';
 
-            let text = '';
-            const length = Math.floor(Math.random() * 25 + 15);
-            for (let i = 0; i < length; i++) {
-                text += Math.random() > 0.5 ? '1' : '0';
+                let text = '';
+                const length = Math.floor(Math.random() * 25 + 15);
+                for (let i = 0; i < length; i++) {
+                    text += Math.random() > 0.5 ? '1' : '0';
+                }
+                column.textContent = text;
+                matrixBg.appendChild(column);
             }
-            column.textContent = text;
-            matrixBg.appendChild(column);
-        }
 
-        for (let i = 0; i < 60; i++) {
-            createMatrixColumn();
+            for (let i = 0; i < 60; i++) {
+                createMatrixColumn();
+            }
         }
 
         // ========== WHITE GLITCH LAYER ==========
         const glitchLayer = document.getElementById('glitchLayer');
 
-        for (let i = 0; i < 10; i++) {
-            const line = document.createElement('div');
-            line.className = 'glitch-line';
-            line.style.top = Math.random() * 100 + '%';
-            glitchLayer.appendChild(line);
-        }
+        if (glitchLayer) {
+            for (let i = 0; i < 10; i++) {
+                const line = document.createElement('div');
+                line.className = 'glitch-line';
+                line.style.top = Math.random() * 100 + '%';
+                glitchLayer.appendChild(line);
+            }
 
-        function triggerWhiteGlitch() {
-            const elements = glitchLayer.children;
-            for (let i = 0; i < 2; i++) {
-                const el = elements[Math.floor(Math.random() * elements.length)];
-                if (el) {
-                    el.style.opacity = Math.random() * 0.15 + 0.05;
-                    setTimeout(() => { el.style.opacity = 0; }, 80);
+            function triggerWhiteGlitch() {
+                const elements = glitchLayer.children;
+                for (let i = 0; i < 2; i++) {
+                    const el = elements[Math.floor(Math.random() * elements.length)];
+                    if (el) {
+                        el.style.opacity = Math.random() * 0.15 + 0.05;
+                        setTimeout(() => { el.style.opacity = 0; }, 80);
+                    }
                 }
             }
-        }
 
-        setInterval(triggerWhiteGlitch, 1000);
+            setInterval(triggerWhiteGlitch, 1000);
+        }
 
         // ========== TITLE DECODE ==========
         const heroTitle = document.getElementById('heroTitle');
@@ -3384,69 +3388,71 @@
         const originalText = 'merch-departament';
         const codeChars = '01!@#$%^&*<>[]{}|/\\';
 
-        function buildTitle() {
-            heroTitle.innerHTML = '';
-            for (let i = 0; i < originalText.length; i++) {
-                const letterWrapper = document.createElement('span');
-                letterWrapper.className = 'letter';
+        if (heroTitle && titleContainer) {
+            function buildTitle() {
+                heroTitle.innerHTML = '';
+                for (let i = 0; i < originalText.length; i++) {
+                    const letterWrapper = document.createElement('span');
+                    letterWrapper.className = 'letter';
 
-                const charSpan = document.createElement('span');
-                charSpan.className = 'char';
-                charSpan.textContent = originalText[i];
+                    const charSpan = document.createElement('span');
+                    charSpan.className = 'char';
+                    charSpan.textContent = originalText[i];
 
-                const randomSpan = document.createElement('span');
-                randomSpan.className = 'random';
-                randomSpan.textContent = codeChars[Math.floor(Math.random() * codeChars.length)];
+                    const randomSpan = document.createElement('span');
+                    randomSpan.className = 'random';
+                    randomSpan.textContent = codeChars[Math.floor(Math.random() * codeChars.length)];
 
-                letterWrapper.appendChild(charSpan);
-                letterWrapper.appendChild(randomSpan);
-                heroTitle.appendChild(letterWrapper);
-            }
-        }
-
-        buildTitle();
-
-        let decodeTimeout = null;
-        let isDecoding = false;
-
-        titleContainer.addEventListener('mouseenter', () => {
-            if (isDecoding) return;
-            isDecoding = true;
-
-            const letters = heroTitle.querySelectorAll('.letter');
-            letters.forEach(l => l.classList.add('decoding'));
-
-            const cycleInterval = setInterval(() => {
-                letters.forEach(l => {
-                    if (l.classList.contains('decoding')) {
-                        l.querySelector('.random').textContent = codeChars[Math.floor(Math.random() * codeChars.length)];
-                    }
-                });
-            }, 30);
-
-            let idx = 0;
-            const revealInterval = setInterval(() => {
-                if (idx < letters.length) {
-                    letters[idx].classList.remove('decoding');
-                    idx++;
-                } else {
-                    clearInterval(revealInterval);
-                    clearInterval(cycleInterval);
-                    isDecoding = false;
+                    letterWrapper.appendChild(charSpan);
+                    letterWrapper.appendChild(randomSpan);
+                    heroTitle.appendChild(letterWrapper);
                 }
-            }, 50);
-
-            decodeTimeout = { cycleInterval, revealInterval };
-        });
-
-        titleContainer.addEventListener('mouseleave', () => {
-            if (decodeTimeout) {
-                clearInterval(decodeTimeout.cycleInterval);
-                clearInterval(decodeTimeout.revealInterval);
             }
-            heroTitle.querySelectorAll('.letter').forEach(l => l.classList.remove('decoding'));
-            isDecoding = false;
-        });
+
+            buildTitle();
+
+            let decodeTimeout = null;
+            let isDecoding = false;
+
+            titleContainer.addEventListener('mouseenter', () => {
+                if (isDecoding) return;
+                isDecoding = true;
+
+                const letters = heroTitle.querySelectorAll('.letter');
+                letters.forEach(l => l.classList.add('decoding'));
+
+                const cycleInterval = setInterval(() => {
+                    letters.forEach(l => {
+                        if (l.classList.contains('decoding')) {
+                            l.querySelector('.random').textContent = codeChars[Math.floor(Math.random() * codeChars.length)];
+                        }
+                    });
+                }, 30);
+
+                let idx = 0;
+                const revealInterval = setInterval(() => {
+                    if (idx < letters.length) {
+                        letters[idx].classList.remove('decoding');
+                        idx++;
+                    } else {
+                        clearInterval(revealInterval);
+                        clearInterval(cycleInterval);
+                        isDecoding = false;
+                    }
+                }, 50);
+
+                decodeTimeout = { cycleInterval, revealInterval };
+            });
+
+            titleContainer.addEventListener('mouseleave', () => {
+                if (decodeTimeout) {
+                    clearInterval(decodeTimeout.cycleInterval);
+                    clearInterval(decodeTimeout.revealInterval);
+                }
+                heroTitle.querySelectorAll('.letter').forEach(l => l.classList.remove('decoding'));
+                isDecoding = false;
+            });
+        }
 
         // ========== BLACKOUT BOOT SEQUENCE ==========
         const parsingBtn = document.getElementById('parsingBtn');
