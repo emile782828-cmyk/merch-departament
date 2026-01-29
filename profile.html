@@ -219,6 +219,48 @@
             margin-bottom: 5px;
         }
 
+        /* Shimmer effect for special users */
+        .user-nickname.shimmer {
+            background: linear-gradient(
+                90deg,
+                #ffffff 0%,
+                #888888 25%,
+                #ffffff 50%,
+                #888888 75%,
+                #ffffff 100%
+            );
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+            text-shadow: none;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Custom rank styling */
+        .user-rank-custom {
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            margin-top: 8px;
+            display: inline-block;
+            background: linear-gradient(90deg, #1a1a1a, #333, #1a1a1a);
+            border: 1px solid #444;
+            color: #fff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: borderPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes borderPulse {
+            0%, 100% { border-color: #444; }
+            50% { border-color: #888; }
+        }
+
         .user-title {
             font-size: 0.75rem;
             color: var(--gold);
@@ -811,6 +853,7 @@
                 </div>
                 <div class="user-nickname" id="userNickname">Unknown</div>
                 <div class="user-title" id="userTitle">AGENT</div>
+                <div class="user-rank-custom" id="userRankCustom" style="display: none;"></div>
             </div>
             <div class="user-card-body">
                 <div class="user-stat-row">
@@ -1066,6 +1109,12 @@
             return merch.reduce((sum, item) => sum + (item.value || 0), 0);
         }
 
+        // Custom ranks for special users (by nickname or email)
+        const CUSTOM_RANKS = {
+            'MercierAmeli': { rank: 'Old_mrx_hood', shimmer: true },
+            'mercierameli': { rank: 'Old_mrx_hood', shimmer: true }
+        };
+
         // Display profile
         function displayProfile(user, isOwn) {
             document.getElementById('loadingState').style.display = 'none';
@@ -1085,12 +1134,28 @@
                 avatarEl.innerHTML = `<div class="avatar-placeholder">${user.nickname.charAt(0).toUpperCase()}</div>`;
             }
 
+            // Check for custom rank
+            const customData = CUSTOM_RANKS[user.nickname] || CUSTOM_RANKS[user.nickname.toLowerCase()];
+            const nicknameEl = document.getElementById('userNickname');
+            const customRankEl = document.getElementById('userRankCustom');
+
             // Basic info
-            document.getElementById('userNickname').textContent = user.nickname;
+            nicknameEl.textContent = user.nickname;
             document.getElementById('userTitle').textContent = getTitle(user);
             document.getElementById('memberSince').textContent = formatDate(user.registeredAt);
             document.getElementById('userRank').textContent = getRank(user.searches || 0);
             document.getElementById('userId').textContent = user.id;
+
+            // Apply custom styling
+            if (customData) {
+                if (customData.shimmer) {
+                    nicknameEl.classList.add('shimmer');
+                }
+                if (customData.rank) {
+                    customRankEl.textContent = customData.rank;
+                    customRankEl.style.display = 'inline-block';
+                }
+            }
 
             // Access badge
             const accessLevel = getAccessLevel(user);
