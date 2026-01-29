@@ -2905,8 +2905,8 @@
         <header class="header">
             <div class="logo">merch-departament</div>
             <nav class="nav-buttons">
-                <a href="#" class="nav-btn">Login</a>
-                <a href="#" class="nav-btn">Register</a>
+                <a href="auth.html" class="nav-btn">Login</a>
+                <a href="auth.html?tab=register" class="nav-btn">Register</a>
             </nav>
         </header>
 
@@ -3936,32 +3936,8 @@
             }
         };
 
-        // Initialize immediately if intro is skipped, or after intro
-        if (!document.querySelector('.intro-screen') ||
-            document.querySelector('.intro-screen').style.display === 'none') {
-            initCardStream();
-        } else {
-            // Observer for when main content becomes visible
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach(mutation => {
-                    if (mutation.target.classList &&
-                        !mutation.target.classList.contains('intro-hidden')) {
-                        initCardStream();
-                        observer.disconnect();
-                    }
-                });
-            });
-
-            const mainEl = document.getElementById('mainContent');
-            if (mainEl) {
-                observer.observe(mainEl, { attributes: true, attributeFilter: ['class'] });
-            }
-        }
-
-        // Also init on skip
-        document.getElementById('skipBtn')?.addEventListener('click', () => {
-            setTimeout(initCardStream, 100);
-        });
+        // Initialize card stream immediately (intro removed)
+        initCardStream();
 
         // ========== HUD ANIMATION DYNAMIC ELEMENTS ==========
         function initHudAnimation() {
