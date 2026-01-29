@@ -3081,97 +3081,11 @@
 
     <!-- User Profile Mini (top right) -->
     <div class="user-profile-mini" id="userProfileMini">
-        <div class="user-avatar-mini" id="userAvatarMini" title="View Profile">
+        <div class="user-avatar-mini" id="userAvatarMini">
             <span id="userAvatarMiniContent">?</span>
         </div>
         <div class="user-name-mini" id="userNameMini">Guest</div>
         <button class="user-logout-btn" id="logoutBtn">LOGOUT</button>
-    </div>
-
-    <!-- Auth Modal -->
-    <div class="auth-modal" id="authModal">
-        <div class="auth-container">
-            <div class="auth-header">
-                <div class="auth-title">ACCESS TERMINAL</div>
-                <button class="auth-close" id="authClose">&times;</button>
-            </div>
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login">Login</button>
-                <button class="auth-tab" data-tab="register">Register</button>
-            </div>
-            <div class="auth-body">
-                <!-- Login Form -->
-                <form class="auth-form active" id="loginForm">
-                    <div class="auth-error" id="loginError"></div>
-                    <div class="auth-input-group">
-                        <label class="auth-label">Email</label>
-                        <input type="email" class="auth-input" id="loginEmail" placeholder="user@domain.com" required>
-                    </div>
-                    <div class="auth-input-group">
-                        <label class="auth-label">Password</label>
-                        <input type="password" class="auth-input" id="loginPassword" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" class="auth-submit">AUTHENTICATE</button>
-                </form>
-
-                <!-- Register Form -->
-                <form class="auth-form" id="registerForm">
-                    <div class="auth-error" id="registerError"></div>
-                    <div class="auth-input-group">
-                        <label class="auth-label">Nickname</label>
-                        <input type="text" class="auth-input" id="regNickname" placeholder="hacker_name" required>
-                    </div>
-                    <div class="auth-input-group">
-                        <label class="auth-label">Email</label>
-                        <input type="email" class="auth-input" id="regEmail" placeholder="user@domain.com" required>
-                    </div>
-                    <div class="auth-input-group">
-                        <label class="auth-label">Password</label>
-                        <input type="password" class="auth-input" id="regPassword" placeholder="••••••••" required>
-                    </div>
-                    <div class="auth-input-group">
-                        <label class="auth-label">Redeem Code</label>
-                        <input type="text" class="auth-input" id="regRedeemCode" placeholder="XXXX-XXXX-XXXX" required>
-                        <div class="auth-redeem-info">* Required for registration access</div>
-                    </div>
-                    <div class="auth-input-group">
-                        <label class="auth-label">Avatar</label>
-                        <div class="auth-avatar-section">
-                            <div class="auth-avatar-preview" id="avatarPreview">
-                                <span>?</span>
-                            </div>
-                            <div class="auth-avatar-upload">
-                                <input type="file" id="avatarInput" accept="image/*" style="display:none">
-                                <button type="button" class="auth-avatar-btn" id="avatarBtn">UPLOAD IMAGE</button>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="submit" class="auth-submit">CREATE ACCOUNT</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Profile Modal -->
-    <div class="profile-modal" id="profileModal">
-        <div class="profile-container">
-            <div class="profile-avatar-large" id="profileAvatarLarge">
-                <span>?</span>
-            </div>
-            <div class="profile-nickname" id="profileNickname">Unknown</div>
-            <div class="profile-email" id="profileEmail">unknown@domain.com</div>
-            <div class="profile-stats">
-                <div class="profile-stat">
-                    <div class="profile-stat-value" id="profileSearches">0</div>
-                    <div class="profile-stat-label">Searches</div>
-                </div>
-                <div class="profile-stat">
-                    <div class="profile-stat-value" id="profileDays">0</div>
-                    <div class="profile-stat-label">Days Active</div>
-                </div>
-            </div>
-            <button class="profile-close" id="profileClose">CLOSE</button>
-        </div>
     </div>
 
     <!-- Parser Modal -->
@@ -4599,335 +4513,75 @@
             if (e.key === 'Escape' && parserModal.classList.contains('active')) {
                 parserModal.classList.remove('active');
             }
-            if (e.key === 'Escape' && authModal.classList.contains('active')) {
-                authModal.classList.remove('active');
-            }
-            if (e.key === 'Escape' && profileModal.classList.contains('active')) {
-                profileModal.classList.remove('active');
-            }
         });
 
-        // ========== AUTH SYSTEM ==========
+        // ========== SIMPLE AUTH CHECK ==========
 
-        // Valid redeem codes (10 codes)
-        const VALID_REDEEM_CODES = [
-            'MERCH-DEPT-2024-ALPHA',
-            'MERCH-DEPT-2024-BETA',
-            'HACK3R-EL1TE-X9K2-M7N4',
-            'D4RK-N0DE-7777-ACES',
-            'CYB3R-PUNK-2077-INIT',
-            'N30N-GRID-5K1P-F0X9',
-            'PHAN-T0M-8X8X-R3D1',
-            'GHOST-SHELL-4A4A-VIP0',
-            'MATR1X-CORE-9Z9Z-ROOT',
-            'BLKH4T-CREW-1337-PASS'
-        ];
-
-        // Auth elements
-        const authModal = document.getElementById('authModal');
-        const authClose = document.getElementById('authClose');
-        const authTabs = document.querySelectorAll('.auth-tab');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const loginError = document.getElementById('loginError');
-        const registerError = document.getElementById('registerError');
-        const avatarInput = document.getElementById('avatarInput');
-        const avatarBtn = document.getElementById('avatarBtn');
-        const avatarPreview = document.getElementById('avatarPreview');
-
-        // Profile elements
-        const userProfileMini = document.getElementById('userProfileMini');
-        const userAvatarMini = document.getElementById('userAvatarMini');
-        const userAvatarMiniContent = document.getElementById('userAvatarMiniContent');
-        const userNameMini = document.getElementById('userNameMini');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const profileModal = document.getElementById('profileModal');
-        const profileAvatarLarge = document.getElementById('profileAvatarLarge');
-        const profileNickname = document.getElementById('profileNickname');
-        const profileEmail = document.getElementById('profileEmail');
-        const profileSearches = document.getElementById('profileSearches');
-        const profileDays = document.getElementById('profileDays');
-        const profileClose = document.getElementById('profileClose');
-
-        // Current avatar data
-        let currentAvatarData = null;
-
-        // Get users from localStorage
-        function getUsers() {
-            const users = localStorage.getItem('merch_dept_users');
-            return users ? JSON.parse(users) : [];
-        }
-
-        // Save users to localStorage
-        function saveUsers(users) {
-            localStorage.setItem('merch_dept_users', JSON.stringify(users));
-        }
-
-        // Get used redeem codes
-        function getUsedCodes() {
-            const codes = localStorage.getItem('merch_dept_used_codes');
-            return codes ? JSON.parse(codes) : [];
-        }
-
-        // Save used redeem codes
-        function saveUsedCodes(codes) {
-            localStorage.setItem('merch_dept_used_codes', JSON.stringify(codes));
-        }
-
-        // Get current user session
+        // Get current user from localStorage
         function getCurrentUser() {
             const user = localStorage.getItem('merch_dept_current_user');
             return user ? JSON.parse(user) : null;
         }
 
-        // Set current user session
-        function setCurrentUser(user) {
-            if (user) {
-                localStorage.setItem('merch_dept_current_user', JSON.stringify(user));
-            } else {
-                localStorage.removeItem('merch_dept_current_user');
-            }
-        }
-
-        // Check if user is logged in
+        // Check if logged in
         function isLoggedIn() {
             return getCurrentUser() !== null;
         }
 
-        // Show auth modal
-        function showAuthModal(tab = 'login') {
-            authModal.classList.add('active');
-            authTabs.forEach(t => {
-                t.classList.toggle('active', t.dataset.tab === tab);
-            });
-            loginForm.classList.toggle('active', tab === 'login');
-            registerForm.classList.toggle('active', tab === 'register');
-            loginError.classList.remove('show');
-            registerError.classList.remove('show');
-        }
+        // Update profile mini display
+        const userProfileMini = document.getElementById('userProfileMini');
+        const userAvatarMiniContent = document.getElementById('userAvatarMiniContent');
+        const userNameMini = document.getElementById('userNameMini');
+        const logoutBtn = document.getElementById('logoutBtn');
 
-        // Hide auth modal
-        function hideAuthModal() {
-            authModal.classList.remove('active');
-            loginForm.reset();
-            registerForm.reset();
-            avatarPreview.innerHTML = '<span>?</span>';
-            currentAvatarData = null;
-        }
-
-        // Update UI based on auth state
-        function updateAuthUI() {
+        function updateProfileMini() {
             const user = getCurrentUser();
-            if (user) {
+            if (user && userProfileMini) {
                 userProfileMini.classList.add('active');
-                userNameMini.textContent = user.nickname;
-                if (user.avatar) {
-                    userAvatarMiniContent.innerHTML = '';
-                    const img = document.createElement('img');
-                    img.src = user.avatar;
-                    userAvatarMiniContent.parentElement.innerHTML = '';
-                    userAvatarMiniContent.parentElement.appendChild(img);
-                } else {
-                    userAvatarMiniContent.textContent = user.nickname.charAt(0).toUpperCase();
+                if (userNameMini) userNameMini.textContent = user.nickname;
+                if (userAvatarMiniContent) {
+                    if (user.avatar) {
+                        userAvatarMiniContent.innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;object-fit:cover;">`;
+                    } else {
+                        userAvatarMiniContent.textContent = user.nickname.charAt(0).toUpperCase();
+                    }
                 }
-            } else {
+            } else if (userProfileMini) {
                 userProfileMini.classList.remove('active');
             }
         }
 
-        // Show profile modal
-        function showProfileModal() {
-            const user = getCurrentUser();
-            if (!user) return;
-
-            profileNickname.textContent = user.nickname;
-            profileEmail.textContent = user.email;
-            profileSearches.textContent = user.searches || 0;
-
-            // Calculate days active
-            const regDate = new Date(user.registeredAt);
-            const now = new Date();
-            const days = Math.floor((now - regDate) / (1000 * 60 * 60 * 24));
-            profileDays.textContent = days;
-
-            if (user.avatar) {
-                profileAvatarLarge.innerHTML = `<img src="${user.avatar}" alt="avatar">`;
-            } else {
-                profileAvatarLarge.innerHTML = `<span>${user.nickname.charAt(0).toUpperCase()}</span>`;
-            }
-
-            profileModal.classList.add('active');
+        // Logout
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('merch_dept_current_user');
+                updateProfileMini();
+            });
         }
 
-        // Auth tab switching
-        authTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabName = tab.dataset.tab;
-                authTabs.forEach(t => t.classList.toggle('active', t === tab));
-                loginForm.classList.toggle('active', tabName === 'login');
-                registerForm.classList.toggle('active', tabName === 'register');
-                loginError.classList.remove('show');
-                registerError.classList.remove('show');
+        // Profile click -> go to auth page
+        const userAvatarMini = document.getElementById('userAvatarMini');
+        if (userAvatarMini) {
+            userAvatarMini.addEventListener('click', () => {
+                window.location.href = 'auth.html?tab=profile';
             });
-        });
+        }
 
-        // Close auth modal
-        authClose.addEventListener('click', hideAuthModal);
-        authModal.addEventListener('click', (e) => {
-            if (e.target === authModal) hideAuthModal();
-        });
-
-        // Avatar upload
-        avatarBtn.addEventListener('click', () => avatarInput.click());
-        avatarInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    currentAvatarData = ev.target.result;
-                    avatarPreview.innerHTML = `<img src="${currentAvatarData}" alt="avatar">`;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Login form
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-
-            const users = getUsers();
-            const user = users.find(u => u.email === email && u.password === password);
-
-            if (user) {
-                setCurrentUser(user);
-                updateAuthUI();
-                hideAuthModal();
-            } else {
-                loginError.textContent = 'Invalid email or password';
-                loginError.classList.add('show');
-            }
-        });
-
-        // Register form
-        registerForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const nickname = document.getElementById('regNickname').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value;
-            const redeemCode = document.getElementById('regRedeemCode').value.trim().toUpperCase();
-
-            // Validate redeem code
-            if (!VALID_REDEEM_CODES.includes(redeemCode)) {
-                registerError.textContent = 'Invalid redeem code';
-                registerError.classList.add('show');
-                return;
-            }
-
-            // Check if code already used
-            const usedCodes = getUsedCodes();
-            if (usedCodes.includes(redeemCode)) {
-                registerError.textContent = 'This redeem code has already been used';
-                registerError.classList.add('show');
-                return;
-            }
-
-            // Check if email exists
-            const users = getUsers();
-            if (users.find(u => u.email === email)) {
-                registerError.textContent = 'Email already registered';
-                registerError.classList.add('show');
-                return;
-            }
-
-            // Create user
-            const newUser = {
-                id: Date.now(),
-                nickname,
-                email,
-                password,
-                avatar: currentAvatarData,
-                redeemCode,
-                registeredAt: new Date().toISOString(),
-                searches: 0
-            };
-
-            users.push(newUser);
-            saveUsers(users);
-
-            // Mark code as used
-            usedCodes.push(redeemCode);
-            saveUsedCodes(usedCodes);
-
-            // Log in the new user
-            setCurrentUser(newUser);
-            updateAuthUI();
-            hideAuthModal();
-        });
-
-        // Logout
-        logoutBtn.addEventListener('click', () => {
-            setCurrentUser(null);
-            updateAuthUI();
-        });
-
-        // Profile click
-        userAvatarMini.addEventListener('click', showProfileModal);
-        profileClose.addEventListener('click', () => {
-            profileModal.classList.remove('active');
-        });
-        profileModal.addEventListener('click', (e) => {
-            if (e.target === profileModal) {
-                profileModal.classList.remove('active');
-            }
-        });
-
-        // Override parser button to check auth
+        // Parser button auth check
         const parsingBtnAuth = document.getElementById('parsing-btn');
         if (parsingBtnAuth) {
-            parsingBtnAuth.removeEventListener('click', null);
-            parsingBtnAuth.addEventListener('click', () => {
+            parsingBtnAuth.addEventListener('click', (e) => {
                 if (!isLoggedIn()) {
-                    showAuthModal('login');
-                    return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = 'auth.html';
+                    return false;
                 }
-                parserModal.classList.add('active');
-                parserInput.focus();
-                parserLoading.style.display = 'none';
-                parserResults.innerHTML = '';
-                parserEngines.forEach(eng => eng.classList.remove('active', 'complete'));
             });
         }
 
-        // Increment search count
-        function incrementSearchCount() {
-            const user = getCurrentUser();
-            if (user) {
-                user.searches = (user.searches || 0) + 1;
-                setCurrentUser(user);
-
-                // Also update in users array
-                const users = getUsers();
-                const idx = users.findIndex(u => u.id === user.id);
-                if (idx !== -1) {
-                    users[idx].searches = user.searches;
-                    saveUsers(users);
-                }
-            }
-        }
-
-        // Wrap the original executeSearch to count searches
-        const originalExecuteSearch = window.executeSearch;
-        if (typeof originalExecuteSearch === 'function') {
-            window.executeSearch = async function() {
-                incrementSearchCount();
-                return originalExecuteSearch.apply(this, arguments);
-            };
-        }
-
-        // Initialize auth UI on page load
-        updateAuthUI();
+        // Init
+        updateProfileMini();
 
     </script>
 </body>
