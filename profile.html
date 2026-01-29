@@ -943,7 +943,27 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDJR7EX93tRu3Vakps81SYzAfFEnSyu4F4",
+            authDomain: "merch-70040.firebaseapp.com",
+            databaseURL: "https://merch-70040-default-rtdb.firebaseio.com",
+            projectId: "merch-70040",
+            storageBucket: "merch-70040.firebasestorage.app",
+            messagingSenderId: "75147839175",
+            appId: "1:75147839175:web:6c488065f03c254de6e0e2",
+            measurementId: "G-FNDQ1XT1ZP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         // Achievements definitions
         const ACHIEVEMENTS = [
             { id: 'first_search', name: 'First Blood', desc: 'Complete your first search', icon: '&#128269;', check: u => (u.searches || 0) >= 1 },
@@ -970,16 +990,27 @@
             { id: 'bulk', name: 'Bulk Operations', check: u => getAccessLevel(u) === 'FOUNDER' },
         ];
 
-        // LocalStorage functions
-        function getUsers() {
-            const users = localStorage.getItem('merch_dept_users');
-            return users ? JSON.parse(users) : [];
+        // Firebase Database Functions
+        async function getUsers() {
+            const snapshot = await database.ref('users').once('value');
+            const data = snapshot.val();
+            return data ? Object.values(data) : [];
         }
 
-        function saveUsers(users) {
-            localStorage.setItem('merch_dept_users', JSON.stringify(users));
+        async function saveUser(user) {
+            await database.ref('users/' + user.id).set(user);
         }
 
+        async function findUser(identifier) {
+            const users = await getUsers();
+            let user = users.find(u => u.id.toString() === identifier);
+            if (!user) {
+                user = users.find(u => u.nickname.toLowerCase() === identifier.toLowerCase());
+            }
+            return user;
+        }
+
+        // LocalStorage for current session only
         function getCurrentUser() {
             const user = localStorage.getItem('merch_dept_current_user');
             return user ? JSON.parse(user) : null;
@@ -991,15 +1022,6 @@
             } else {
                 localStorage.removeItem('merch_dept_current_user');
             }
-        }
-
-        function findUser(identifier) {
-            const users = getUsers();
-            let user = users.find(u => u.id.toString() === identifier);
-            if (!user) {
-                user = users.find(u => u.nickname.toLowerCase() === identifier.toLowerCase());
-            }
-            return user;
         }
 
         // Helpers
@@ -1189,20 +1211,15 @@
             }
         });
 
-        document.getElementById('saveAvatarBtn').addEventListener('click', () => {
+        document.getElementById('saveAvatarBtn').addEventListener('click', async () => {
             if (newAvatarData) {
                 const currentUser = getCurrentUser();
                 if (currentUser) {
                     currentUser.avatar = newAvatarData;
                     setCurrentUser(currentUser);
 
-                    // Update in users array
-                    const users = getUsers();
-                    const idx = users.findIndex(u => u.id === currentUser.id);
-                    if (idx !== -1) {
-                        users[idx].avatar = newAvatarData;
-                        saveUsers(users);
-                    }
+                    // Update in Firebase
+                    await saveUser(currentUser);
 
                     // Update UI
                     document.getElementById('userAvatar').innerHTML = `<img src="${newAvatarData}" alt="avatar">`;
@@ -1267,7 +1284,7 @@
         });
 
         // Initialize
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const userId = urlParams.get('id');
             const userName = urlParams.get('user');
@@ -1276,24 +1293,32 @@
             let targetUser = null;
             let isOwnProfile = false;
 
-            if (userId) {
-                targetUser = findUser(userId);
-            } else if (userName) {
-                targetUser = findUser(userName);
-            } else if (currentUser) {
-                targetUser = currentUser;
-                isOwnProfile = true;
-            }
-
-            if (targetUser) {
-                if (currentUser && currentUser.id === targetUser.id) {
+            try {
+                if (userId) {
+                    targetUser = await findUser(userId);
+                } else if (userName) {
+                    targetUser = await findUser(userName);
+                } else if (currentUser) {
+                    // Refresh user data from Firebase
+                    targetUser = await findUser(currentUser.nickname) || currentUser;
                     isOwnProfile = true;
                 }
 
-                setTimeout(() => {
-                    displayProfile(targetUser, isOwnProfile);
-                }, 300);
-            } else {
+                if (targetUser) {
+                    if (currentUser && currentUser.id.toString() === targetUser.id.toString()) {
+                        isOwnProfile = true;
+                    }
+
+                    setTimeout(() => {
+                        displayProfile(targetUser, isOwnProfile);
+                    }, 300);
+                } else {
+                    setTimeout(() => {
+                        showError();
+                    }, 300);
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
                 setTimeout(() => {
                     showError();
                 }, 300);

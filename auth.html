@@ -31,7 +31,6 @@
             overflow: hidden;
         }
 
-        /* Matrix background */
         .matrix-bg {
             position: fixed;
             top: 0;
@@ -59,7 +58,6 @@
             );
         }
 
-        /* Auth Container */
         .auth-page {
             width: 90%;
             max-width: 450px;
@@ -107,7 +105,6 @@
             color: var(--green);
         }
 
-        /* Tabs */
         .auth-tabs {
             display: flex;
             border-bottom: 1px solid rgba(0, 255, 65, 0.2);
@@ -138,7 +135,6 @@
             border-bottom: 2px solid var(--green);
         }
 
-        /* Forms */
         .auth-body {
             padding: 30px;
         }
@@ -186,7 +182,6 @@
             color: #444;
         }
 
-        /* Avatar */
         .auth-avatar-section {
             display: flex;
             align-items: center;
@@ -233,7 +228,6 @@
             border-color: var(--green);
         }
 
-        /* Submit */
         .auth-submit {
             margin-top: 10px;
             padding: 16px;
@@ -254,7 +248,11 @@
             box-shadow: 0 0 40px rgba(0, 255, 65, 0.5);
         }
 
-        /* Error */
+        .auth-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .auth-error {
             color: var(--red);
             font-size: 0.85rem;
@@ -269,7 +267,6 @@
             display: block;
         }
 
-        /* Success */
         .auth-success {
             color: var(--green);
             font-size: 0.85rem;
@@ -289,7 +286,6 @@
             color: #555;
         }
 
-        /* Profile View */
         .profile-view {
             display: none;
             flex-direction: column;
@@ -373,6 +369,8 @@
         .profile-actions {
             display: flex;
             gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .profile-btn {
@@ -395,11 +393,53 @@
             border-color: var(--red);
             color: var(--red);
         }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #111;
+            border-top-color: var(--green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--green);
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
     <div class="scanlines"></div>
     <canvas class="matrix-bg" id="matrixBg"></canvas>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Connecting to database...</div>
+    </div>
 
     <div class="auth-page">
         <a href="index.html" class="back-link">&larr; Back to site</a>
@@ -499,7 +539,27 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDJR7EX93tRu3Vakps81SYzAfFEnSyu4F4",
+            authDomain: "merch-70040.firebaseapp.com",
+            databaseURL: "https://merch-70040-default-rtdb.firebaseio.com",
+            projectId: "merch-70040",
+            storageBucket: "merch-70040.firebasestorage.app",
+            messagingSenderId: "75147839175",
+            appId: "1:75147839175:web:6c488065f03c254de6e0e2",
+            measurementId: "G-FNDQ1XT1ZP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         // Valid redeem codes
         const VALID_REDEEM_CODES = [
             'MERCH-DEPT-2024-ALPHA',
@@ -514,25 +574,48 @@
             'BLKH4T-CREW-1337-PASS'
         ];
 
-        // LocalStorage functions
-        function getUsers() {
-            const users = localStorage.getItem('merch_dept_users');
-            return users ? JSON.parse(users) : [];
+        // Loading overlay
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        function showLoading(text = 'Connecting to database...') {
+            loadingOverlay.querySelector('.loading-text').textContent = text;
+            loadingOverlay.classList.add('active');
+        }
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
         }
 
-        function saveUsers(users) {
-            localStorage.setItem('merch_dept_users', JSON.stringify(users));
+        // Firebase Database Functions
+        async function getUsers() {
+            const snapshot = await database.ref('users').once('value');
+            const data = snapshot.val();
+            return data ? Object.values(data) : [];
         }
 
-        function getUsedCodes() {
-            const codes = localStorage.getItem('merch_dept_used_codes');
-            return codes ? JSON.parse(codes) : [];
+        async function getUserByEmail(email) {
+            const users = await getUsers();
+            return users.find(u => u.email === email);
         }
 
-        function saveUsedCodes(codes) {
-            localStorage.setItem('merch_dept_used_codes', JSON.stringify(codes));
+        async function getUserByNickname(nickname) {
+            const users = await getUsers();
+            return users.find(u => u.nickname.toLowerCase() === nickname.toLowerCase());
         }
 
+        async function saveUser(user) {
+            await database.ref('users/' + user.id).set(user);
+        }
+
+        async function getUsedCodes() {
+            const snapshot = await database.ref('usedCodes').once('value');
+            const data = snapshot.val();
+            return data ? Object.values(data) : [];
+        }
+
+        async function addUsedCode(code) {
+            await database.ref('usedCodes').push(code);
+        }
+
+        // LocalStorage for current session
         function getCurrentUser() {
             const user = localStorage.getItem('merch_dept_current_user');
             return user ? JSON.parse(user) : null;
@@ -584,7 +667,6 @@
         avatarInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
-                // Resize image to save space
                 const reader = new FileReader();
                 reader.onload = (ev) => {
                     const img = new Image();
@@ -605,36 +687,46 @@
         });
 
         // Login
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
 
-            const users = getUsers();
-            const user = users.find(u => u.email === email && u.password === password);
+            showLoading('Authenticating...');
 
-            if (user) {
-                setCurrentUser(user);
-                loginSuccess.textContent = 'Access granted! Redirecting...';
-                loginSuccess.classList.add('show');
-                loginError.classList.remove('show');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1000);
-            } else {
-                loginError.textContent = 'Invalid credentials';
+            try {
+                const user = await getUserByEmail(email);
+
+                if (user && user.password === password) {
+                    setCurrentUser(user);
+                    hideLoading();
+                    loginSuccess.textContent = 'Access granted! Redirecting...';
+                    loginSuccess.classList.add('show');
+                    loginError.classList.remove('show');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                } else {
+                    hideLoading();
+                    loginError.textContent = 'Invalid credentials';
+                    loginError.classList.add('show');
+                    loginSuccess.classList.remove('show');
+                }
+            } catch (error) {
+                hideLoading();
+                loginError.textContent = 'Connection error. Please try again.';
                 loginError.classList.add('show');
-                loginSuccess.classList.remove('show');
+                console.error(error);
             }
         });
 
-        // Nickname validation function
+        // Nickname validation
         function isValidNickname(nickname) {
             return /^[a-zA-Z0-9_-]+$/.test(nickname);
         }
 
         // Register
-        registerForm.addEventListener('submit', (e) => {
+        registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const nickname = document.getElementById('regNickname').value.trim();
             const email = document.getElementById('regEmail').value.trim();
@@ -654,54 +746,70 @@
                 return;
             }
 
-            // Validate
+            // Validate redeem code
             if (!VALID_REDEEM_CODES.includes(redeemCode)) {
                 registerError.textContent = 'Invalid redeem code';
                 registerError.classList.add('show');
                 return;
             }
 
-            const usedCodes = getUsedCodes();
-            if (usedCodes.includes(redeemCode)) {
-                registerError.textContent = 'This code has already been used';
+            showLoading('Creating account...');
+
+            try {
+                // Check used codes
+                const usedCodes = await getUsedCodes();
+                if (usedCodes.includes(redeemCode)) {
+                    hideLoading();
+                    registerError.textContent = 'This code has already been used';
+                    registerError.classList.add('show');
+                    return;
+                }
+
+                // Check email
+                const existingEmail = await getUserByEmail(email);
+                if (existingEmail) {
+                    hideLoading();
+                    registerError.textContent = 'Email already registered';
+                    registerError.classList.add('show');
+                    return;
+                }
+
+                // Check nickname
+                const existingNickname = await getUserByNickname(nickname);
+                if (existingNickname) {
+                    hideLoading();
+                    registerError.textContent = 'Nickname already taken';
+                    registerError.classList.add('show');
+                    return;
+                }
+
+                // Create user
+                const newUser = {
+                    id: Date.now().toString(),
+                    nickname,
+                    email,
+                    password,
+                    avatar: currentAvatarData || null,
+                    redeemCode,
+                    registeredAt: new Date().toISOString(),
+                    searches: 0,
+                    foundMerch: [],
+                    networth: 0
+                };
+
+                await saveUser(newUser);
+                await addUsedCode(redeemCode);
+
+                setCurrentUser(newUser);
+                hideLoading();
+                window.location.href = 'profile.html?user=' + encodeURIComponent(newUser.nickname);
+
+            } catch (error) {
+                hideLoading();
+                registerError.textContent = 'Connection error. Please try again.';
                 registerError.classList.add('show');
-                return;
+                console.error(error);
             }
-
-            const users = getUsers();
-            if (users.find(u => u.email === email)) {
-                registerError.textContent = 'Email already registered';
-                registerError.classList.add('show');
-                return;
-            }
-
-            if (users.find(u => u.nickname.toLowerCase() === nickname.toLowerCase())) {
-                registerError.textContent = 'Nickname already taken';
-                registerError.classList.add('show');
-                return;
-            }
-
-            // Create user
-            const newUser = {
-                id: Date.now(),
-                nickname,
-                email,
-                password,
-                avatar: currentAvatarData,
-                redeemCode,
-                registeredAt: new Date().toISOString(),
-                searches: 0
-            };
-
-            users.push(newUser);
-            saveUsers(users);
-
-            usedCodes.push(redeemCode);
-            saveUsedCodes(usedCodes);
-
-            setCurrentUser(newUser);
-            // Redirect to profile page after registration
-            window.location.href = 'profile.html?user=' + encodeURIComponent(newUser.nickname);
         });
 
         // View Profile
@@ -720,13 +828,13 @@
             profileAvatarInput.click();
         });
 
-        profileAvatarInput.addEventListener('change', (e) => {
+        profileAvatarInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = (ev) => {
+                reader.onload = async (ev) => {
                     const img = new Image();
-                    img.onload = () => {
+                    img.onload = async () => {
                         const canvas = document.createElement('canvas');
                         const size = 150;
                         canvas.width = size;
@@ -735,21 +843,13 @@
                         ctx.drawImage(img, 0, 0, size, size);
                         const newAvatarData = canvas.toDataURL('image/jpeg', 0.7);
 
-                        // Update current user
                         const user = getCurrentUser();
                         if (user) {
+                            showLoading('Updating avatar...');
                             user.avatar = newAvatarData;
                             setCurrentUser(user);
-
-                            // Update in users array
-                            const users = getUsers();
-                            const idx = users.findIndex(u => u.id === user.id);
-                            if (idx !== -1) {
-                                users[idx].avatar = newAvatarData;
-                                saveUsers(users);
-                            }
-
-                            // Update UI
+                            await saveUser(user);
+                            hideLoading();
                             document.getElementById('profileAvatar').innerHTML = `<img src="${newAvatarData}" alt="avatar">`;
                         }
                     };
