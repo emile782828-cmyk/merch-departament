@@ -437,7 +437,8 @@
                     <div class="auth-error" id="registerError"></div>
                     <div class="auth-input-group">
                         <label class="auth-label">Nickname</label>
-                        <input type="text" class="auth-input" id="regNickname" placeholder="hacker_name" required>
+                        <input type="text" class="auth-input" id="regNickname" placeholder="hacker_name" required pattern="^[a-zA-Z0-9_-]+$" title="Only letters, numbers, underscore and hyphen allowed">
+                        <div class="auth-redeem-info">* Only letters, numbers, underscore (_) and hyphen (-) allowed</div>
                     </div>
                     <div class="auth-input-group">
                         <label class="auth-label">Email</label>
@@ -469,8 +470,12 @@
 
                 <!-- Profile View -->
                 <div class="profile-view" id="profileView">
-                    <div class="profile-avatar-large" id="profileAvatar">
-                        <span>?</span>
+                    <div class="profile-avatar-container" style="position: relative; display: inline-block;">
+                        <div class="profile-avatar-large" id="profileAvatar">
+                            <span>?</span>
+                        </div>
+                        <button type="button" class="avatar-edit-btn" id="profileAvatarEditBtn" title="Change Avatar" style="position: absolute; bottom: 5px; right: 5px; width: 28px; height: 28px; background: #000; border: 2px solid var(--green); border-radius: 50%; color: var(--green); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">&#9998;</button>
+                        <input type="file" id="profileAvatarInput" accept="image/*" style="display:none">
                     </div>
                     <div class="profile-nickname" id="profileNickname">Unknown</div>
                     <div class="profile-email" id="profileEmail">unknown@domain.com</div>
@@ -623,6 +628,11 @@
             }
         });
 
+        // Nickname validation function
+        function isValidNickname(nickname) {
+            return /^[a-zA-Z0-9_-]+$/.test(nickname);
+        }
+
         // Register
         registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -630,6 +640,19 @@
             const email = document.getElementById('regEmail').value.trim();
             const password = document.getElementById('regPassword').value;
             const redeemCode = document.getElementById('regRedeemCode').value.trim().toUpperCase();
+
+            // Validate nickname
+            if (!isValidNickname(nickname)) {
+                registerError.textContent = 'Nickname can only contain letters, numbers, underscore and hyphen';
+                registerError.classList.add('show');
+                return;
+            }
+
+            if (nickname.length < 3 || nickname.length > 20) {
+                registerError.textContent = 'Nickname must be 3-20 characters long';
+                registerError.classList.add('show');
+                return;
+            }
 
             // Validate
             if (!VALID_REDEEM_CODES.includes(redeemCode)) {
@@ -648,6 +671,12 @@
             const users = getUsers();
             if (users.find(u => u.email === email)) {
                 registerError.textContent = 'Email already registered';
+                registerError.classList.add('show');
+                return;
+            }
+
+            if (users.find(u => u.nickname.toLowerCase() === nickname.toLowerCase())) {
+                registerError.textContent = 'Nickname already taken';
                 registerError.classList.add('show');
                 return;
             }
@@ -680,6 +709,53 @@
             const user = getCurrentUser();
             if (user) {
                 window.location.href = 'profile.html?user=' + encodeURIComponent(user.nickname);
+            }
+        });
+
+        // Profile Avatar Edit
+        const profileAvatarEditBtn = document.getElementById('profileAvatarEditBtn');
+        const profileAvatarInput = document.getElementById('profileAvatarInput');
+
+        profileAvatarEditBtn.addEventListener('click', () => {
+            profileAvatarInput.click();
+        });
+
+        profileAvatarInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const size = 150;
+                        canvas.width = size;
+                        canvas.height = size;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, size, size);
+                        const newAvatarData = canvas.toDataURL('image/jpeg', 0.7);
+
+                        // Update current user
+                        const user = getCurrentUser();
+                        if (user) {
+                            user.avatar = newAvatarData;
+                            setCurrentUser(user);
+
+                            // Update in users array
+                            const users = getUsers();
+                            const idx = users.findIndex(u => u.id === user.id);
+                            if (idx !== -1) {
+                                users[idx].avatar = newAvatarData;
+                                saveUsers(users);
+                            }
+
+                            // Update UI
+                            document.getElementById('profileAvatar').innerHTML = `<img src="${newAvatarData}" alt="avatar">`;
+                        }
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
             }
         });
 

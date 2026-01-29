@@ -10,6 +10,8 @@
             --green: #00ff41;
             --red: #ff0040;
             --cyan: #00d4ff;
+            --gold: #ffd700;
+            --purple: #b366ff;
             --text: #e0e0e0;
             --text-dim: #888;
             --bg: #000;
@@ -26,9 +28,6 @@
             color: var(--text);
             font-family: 'JetBrains Mono', monospace;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             overflow-x: hidden;
         }
 
@@ -40,7 +39,7 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            opacity: 0.1;
+            opacity: 0.08;
         }
 
         .scanlines {
@@ -60,68 +59,143 @@
             );
         }
 
-        /* Profile Container */
-        .profile-page {
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-            z-index: 10;
-            padding: 20px 0;
+        /* Header */
+        .profile-header-bar {
+            background: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
+            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .back-link {
-            display: inline-block;
-            color: #555;
+        .header-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--green);
+            text-decoration: none;
+            text-shadow: 0 0 20px var(--green);
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        .header-nav a {
+            color: #666;
             text-decoration: none;
             font-size: 0.85rem;
             transition: all 0.3s;
-            margin-bottom: 20px;
         }
 
-        .back-link:hover {
+        .header-nav a:hover {
             color: var(--green);
         }
 
-        .profile-card {
-            background: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
-            border: 1px solid var(--green);
-            box-shadow: 0 0 80px rgba(0, 255, 65, 0.2), inset 0 0 30px rgba(0, 255, 65, 0.03);
-            position: relative;
-            overflow: hidden;
+        /* Main Content */
+        .profile-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 25px;
         }
 
-        /* Glitch effect on hover */
-        .profile-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
+        @media (max-width: 900px) {
+            .profile-page {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Left Sidebar - User Card */
+        .user-card {
+            background: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            position: sticky;
+            top: 80px;
+            height: fit-content;
+        }
+
+        .user-card-header {
+            background: linear-gradient(180deg, rgba(0, 255, 65, 0.1) 0%, transparent 100%);
+            padding: 25px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+        }
+
+        .user-avatar-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .user-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--green);
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.3);
+        }
+
+        .user-avatar img {
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
-            transition: left 0.5s;
+            object-fit: cover;
         }
 
-        .profile-card:hover::before {
-            left: 100%;
+        .user-avatar .avatar-placeholder {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 255, 65, 0.1);
+            color: var(--green);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
         }
 
-        .profile-header {
-            padding: 30px;
-            text-align: center;
-            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
-            position: relative;
-        }
-
-        .profile-status {
+        .avatar-edit-btn {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            bottom: 5px;
+            right: 5px;
+            width: 32px;
+            height: 32px;
+            background: #000;
+            border: 2px solid var(--green);
+            border-radius: 50%;
+            color: var(--green);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .avatar-edit-btn:hover {
+            background: var(--green);
+            color: #000;
+        }
+
+        .user-card.own-profile .avatar-edit-btn {
+            display: flex;
+        }
+
+        .online-status {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
             font-size: 0.7rem;
             color: var(--green);
+            margin-bottom: 10px;
         }
 
         .status-dot {
@@ -137,180 +211,408 @@
             50% { opacity: 0.5; box-shadow: 0 0 15px var(--green); }
         }
 
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 3px solid var(--green);
-            overflow: hidden;
-            margin: 0 auto 20px;
-            box-shadow: 0 0 40px rgba(0, 255, 65, 0.3);
-            position: relative;
-        }
-
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-avatar .avatar-placeholder {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 255, 65, 0.1);
-            color: var(--green);
+        .user-nickname {
             font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
+            font-size: 1.4rem;
+            color: var(--green);
+            text-shadow: 0 0 20px var(--green);
+            margin-bottom: 5px;
         }
 
-        .profile-nickname {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            color: var(--green);
-            text-shadow: 0 0 30px var(--green);
-            margin-bottom: 8px;
+        .user-title {
+            font-size: 0.75rem;
+            color: var(--gold);
+            text-transform: uppercase;
             letter-spacing: 2px;
         }
 
-        .profile-id {
-            font-size: 0.75rem;
+        .user-card-body {
+            padding: 20px;
+        }
+
+        .user-stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #111;
+        }
+
+        .user-stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .user-stat-label {
+            color: #555;
+            font-size: 0.8rem;
+        }
+
+        .user-stat-value {
+            color: var(--text);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .user-stat-value.highlight {
+            color: var(--green);
+        }
+
+        .user-stat-value.gold {
+            color: var(--gold);
+        }
+
+        .user-stat-value.cyan {
+            color: var(--cyan);
+        }
+
+        /* Access Level Badge */
+        .access-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-radius: 2px;
+        }
+
+        .access-badge.founder {
+            background: linear-gradient(90deg, #ffd700, #ff8c00);
+            color: #000;
+        }
+
+        .access-badge.vip {
+            background: linear-gradient(90deg, #b366ff, #8a2be2);
+            color: #fff;
+        }
+
+        .access-badge.standard {
+            background: rgba(0, 255, 65, 0.2);
+            border: 1px solid var(--green);
+            color: var(--green);
+        }
+
+        /* Share URL */
+        .share-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #111;
+        }
+
+        .share-label {
+            font-size: 0.65rem;
             color: #444;
+            margin-bottom: 8px;
+            text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .profile-body {
-            padding: 25px 30px;
+        .share-box {
+            display: flex;
+            gap: 5px;
         }
 
-        .profile-stats {
+        .share-input {
+            flex: 1;
+            background: #050505;
+            border: 1px solid #222;
+            padding: 8px 10px;
+            color: var(--cyan);
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .share-btn {
+            background: transparent;
+            border: 1px solid var(--green);
+            color: var(--green);
+            padding: 8px 12px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .share-btn:hover, .share-btn.copied {
+            background: var(--green);
+            color: #000;
+        }
+
+        /* Right Content */
+        .profile-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* Section Card */
+        .section-card {
+            background: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
+            border: 1px solid rgba(0, 255, 65, 0.2);
+        }
+
+        .section-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            color: var(--green);
+            font-size: 1.1rem;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--green);
+            letter-spacing: 2px;
+        }
+
+        .section-body {
+            padding: 20px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
-            margin-bottom: 25px;
         }
 
-        .stat-box {
+        @media (max-width: 700px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .stat-card {
             background: rgba(0, 255, 65, 0.03);
-            border: 1px solid rgba(0, 255, 65, 0.15);
-            padding: 15px 10px;
+            border: 1px solid rgba(0, 255, 65, 0.1);
+            padding: 20px;
             text-align: center;
             transition: all 0.3s;
         }
 
-        .stat-box:hover {
+        .stat-card:hover {
             border-color: var(--green);
             background: rgba(0, 255, 65, 0.08);
         }
 
-        .stat-value {
+        .stat-card-value {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: var(--green);
             margin-bottom: 5px;
         }
 
-        .stat-label {
-            font-size: 0.65rem;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .profile-info {
-            border-top: 1px solid rgba(0, 255, 65, 0.15);
-            padding-top: 20px;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #111;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: #555;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .info-value {
-            color: var(--text);
-            font-size: 0.85rem;
-        }
-
-        .info-value.code {
-            color: var(--cyan);
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        /* Share section */
-        .share-section {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 255, 65, 0.15);
-        }
-
-        .share-label {
+        .stat-card-label {
             font-size: 0.7rem;
             color: #555;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 10px;
         }
 
-        .share-url-box {
-            display: flex;
+        /* Permissions List */
+        .permissions-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
 
-        .share-url {
-            flex: 1;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #222;
+        @media (max-width: 600px) {
+            .permissions-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             padding: 12px 15px;
-            color: var(--cyan);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #111;
         }
 
-        .share-copy-btn {
-            background: transparent;
-            border: 1px solid var(--green);
+        .permission-icon {
+            font-size: 1rem;
+        }
+
+        .permission-icon.granted {
             color: var(--green);
-            padding: 12px 20px;
-            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .permission-icon.denied {
+            color: #333;
+        }
+
+        .permission-text {
             font-size: 0.8rem;
-            cursor: pointer;
+            color: var(--text);
+        }
+
+        .permission-item.denied .permission-text {
+            color: #444;
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .achievement {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #222;
+            padding: 15px;
+            text-align: center;
             transition: all 0.3s;
-            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
         }
 
-        .share-copy-btn:hover {
-            background: var(--green);
-            color: #000;
+        .achievement.unlocked {
+            border-color: var(--gold);
+            background: rgba(255, 215, 0, 0.05);
         }
 
-        .share-copy-btn.copied {
-            background: var(--green);
-            color: #000;
+        .achievement.locked {
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .achievement-name {
+            font-size: 0.75rem;
+            color: var(--text);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .achievement-desc {
+            font-size: 0.65rem;
+            color: #555;
+        }
+
+        .achievement.unlocked .achievement-name {
+            color: var(--gold);
+        }
+
+        /* Merch List */
+        .merch-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .merch-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #111;
+            transition: all 0.3s;
+        }
+
+        .merch-item:hover {
+            border-color: var(--green);
+        }
+
+        .merch-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .merch-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .merch-name {
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .merch-date {
+            font-size: 0.7rem;
+            color: #444;
+        }
+
+        .merch-value {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--green);
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #444;
+        }
+
+        .empty-state-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 0.85rem;
+        }
+
+        /* Networth Section */
+        .networth-display {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .networth-label {
+            font-size: 0.75rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .networth-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: var(--gold);
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .networth-currency {
+            font-size: 1rem;
+            color: #666;
+            margin-left: 5px;
         }
 
         /* Error State */
-        .profile-error {
+        .error-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
             text-align: center;
-            padding: 60px 30px;
+        }
+
+        .error-content {
+            padding: 40px;
         }
 
         .error-icon {
@@ -321,25 +623,24 @@
 
         .error-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             color: var(--red);
             margin-bottom: 10px;
         }
 
         .error-text {
             color: #555;
-            font-size: 0.9rem;
+            margin-bottom: 25px;
         }
 
         .error-btn {
-            margin-top: 25px;
             display: inline-block;
             padding: 12px 30px;
             background: transparent;
             border: 1px solid var(--green);
             color: var(--green);
-            font-family: 'JetBrains Mono', monospace;
             text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
             transition: all 0.3s;
         }
 
@@ -348,10 +649,12 @@
             color: #000;
         }
 
-        /* Loading State */
-        .profile-loading {
-            text-align: center;
-            padding: 60px 30px;
+        /* Loading */
+        .loading-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
         }
 
         .loading-spinner {
@@ -361,51 +664,104 @@
             border-top-color: var(--green);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .loading-text {
-            color: #555;
-            font-size: 0.9rem;
-        }
-
-        /* Own profile badge */
-        .own-profile-badge {
-            display: inline-block;
-            background: rgba(0, 255, 65, 0.1);
-            border: 1px solid var(--green);
-            color: var(--green);
-            font-size: 0.65rem;
-            padding: 4px 10px;
-            margin-top: 10px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* Edit button */
-        .edit-profile-btn {
-            display: block;
+        /* Avatar Upload Modal */
+        .avatar-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avatar-modal.active {
+            display: flex;
+        }
+
+        .avatar-modal-content {
+            background: #0a0a0a;
+            border: 1px solid var(--green);
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .avatar-modal-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--green);
+            margin-bottom: 20px;
+        }
+
+        .avatar-modal-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid var(--green);
+            margin: 0 auto 20px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 255, 65, 0.1);
+        }
+
+        .avatar-modal-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-modal-preview span {
+            font-size: 3rem;
+            color: var(--green);
+        }
+
+        .avatar-modal-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
             margin-top: 20px;
-            padding: 14px;
-            background: transparent;
-            border: 1px solid #333;
-            color: #666;
+        }
+
+        .avatar-modal-btn {
+            padding: 12px 25px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            border: 1px solid;
         }
 
-        .edit-profile-btn:hover {
+        .avatar-modal-btn.primary {
+            background: var(--green);
             border-color: var(--green);
-            color: var(--green);
+            color: #000;
+        }
+
+        .avatar-modal-btn.secondary {
+            background: transparent;
+            border-color: #333;
+            color: #666;
+        }
+
+        .avatar-modal-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .avatar-modal-btn.secondary:hover {
+            border-color: var(--red);
+            color: var(--red);
         }
     </style>
 </head>
@@ -413,91 +769,215 @@
     <div class="scanlines"></div>
     <canvas class="matrix-bg" id="matrixBg"></canvas>
 
-    <div class="profile-page">
-        <a href="index.html" class="back-link">&larr; Back to site</a>
+    <!-- Header -->
+    <div class="profile-header-bar">
+        <a href="index.html" class="header-logo">MERCH-DEPARTAMENT</a>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="auth.html">Settings</a>
+        </nav>
+    </div>
 
-        <div class="profile-card">
-            <!-- Loading State -->
-            <div class="profile-loading" id="loadingState">
-                <div class="loading-spinner"></div>
-                <div class="loading-text">Loading profile...</div>
-            </div>
+    <!-- Loading State -->
+    <div class="loading-page" id="loadingState">
+        <div class="loading-spinner"></div>
+    </div>
 
-            <!-- Error State -->
-            <div class="profile-error" id="errorState" style="display: none;">
-                <div class="error-icon">&#x26A0;</div>
-                <div class="error-title">AGENT NOT FOUND</div>
-                <div class="error-text">The requested profile does not exist or has been terminated.</div>
-                <a href="index.html" class="error-btn">RETURN TO BASE</a>
-            </div>
+    <!-- Error State -->
+    <div class="error-page" id="errorState" style="display: none;">
+        <div class="error-content">
+            <div class="error-icon">&#x26A0;</div>
+            <div class="error-title">AGENT NOT FOUND</div>
+            <div class="error-text">The requested profile does not exist or has been terminated.</div>
+            <a href="index.html" class="error-btn">RETURN TO BASE</a>
+        </div>
+    </div>
 
-            <!-- Profile Content -->
-            <div id="profileContent" style="display: none;">
-                <div class="profile-header">
-                    <div class="profile-status">
-                        <div class="status-dot"></div>
-                        <span>ONLINE</span>
-                    </div>
-                    <div class="profile-avatar" id="profileAvatar">
+    <!-- Profile Content -->
+    <div class="profile-page" id="profilePage" style="display: none;">
+        <!-- Left Sidebar -->
+        <div class="user-card" id="userCard">
+            <div class="user-card-header">
+                <div class="user-avatar-container">
+                    <div class="user-avatar" id="userAvatar">
                         <div class="avatar-placeholder">?</div>
                     </div>
-                    <div class="profile-nickname" id="profileNickname">Unknown</div>
-                    <div class="profile-id" id="profileId">ID: ------</div>
-                    <div class="own-profile-badge" id="ownBadge" style="display: none;">YOUR PROFILE</div>
+                    <button class="avatar-edit-btn" id="avatarEditBtn" title="Change Avatar">&#9998;</button>
+                    <input type="file" id="avatarFileInput" accept="image/*" style="display:none">
+                </div>
+                <div class="online-status">
+                    <div class="status-dot"></div>
+                    <span>ONLINE</span>
+                </div>
+                <div class="user-nickname" id="userNickname">Unknown</div>
+                <div class="user-title" id="userTitle">AGENT</div>
+            </div>
+            <div class="user-card-body">
+                <div class="user-stat-row">
+                    <span class="user-stat-label">Access Level</span>
+                    <span class="user-stat-value" id="accessBadgeContainer">
+                        <span class="access-badge standard" id="accessBadge">STANDARD</span>
+                    </span>
+                </div>
+                <div class="user-stat-row">
+                    <span class="user-stat-label">Member Since</span>
+                    <span class="user-stat-value" id="memberSince">Unknown</span>
+                </div>
+                <div class="user-stat-row">
+                    <span class="user-stat-label">Rank</span>
+                    <span class="user-stat-value highlight" id="userRank">NEWBIE</span>
+                </div>
+                <div class="user-stat-row">
+                    <span class="user-stat-label">User ID</span>
+                    <span class="user-stat-value" id="userId">------</span>
                 </div>
 
-                <div class="profile-body">
-                    <div class="profile-stats">
-                        <div class="stat-box">
-                            <div class="stat-value" id="statSearches">0</div>
-                            <div class="stat-label">Searches</div>
+                <div class="share-section">
+                    <div class="share-label">Profile Link</div>
+                    <div class="share-box">
+                        <input type="text" class="share-input" id="shareInput" readonly>
+                        <button class="share-btn" id="shareBtn">COPY</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Content -->
+        <div class="profile-content">
+            <!-- Stats Section -->
+            <div class="section-card">
+                <div class="section-header">
+                    <span class="section-icon">&#9733;</span>
+                    <span class="section-title">STATISTICS</span>
+                </div>
+                <div class="section-body">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-value" id="statSearches">0</div>
+                            <div class="stat-card-label">Searches</div>
                         </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="statDays">0</div>
-                            <div class="stat-label">Days Active</div>
+                        <div class="stat-card">
+                            <div class="stat-card-value" id="statDays">0</div>
+                            <div class="stat-card-label">Days Active</div>
                         </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="statRank">N/A</div>
-                            <div class="stat-label">Rank</div>
+                        <div class="stat-card">
+                            <div class="stat-card-value" id="statMerch">0</div>
+                            <div class="stat-card-label">Merch Found</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value" id="statAchievements">0</div>
+                            <div class="stat-card-label">Achievements</div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="profile-info">
-                        <div class="info-row">
-                            <span class="info-label">Joined</span>
-                            <span class="info-value" id="infoJoined">Unknown</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Access Level</span>
-                            <span class="info-value code" id="infoAccess">STANDARD</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Status</span>
-                            <span class="info-value" id="infoStatus">Active</span>
-                        </div>
+            <!-- Networth Section -->
+            <div class="section-card">
+                <div class="section-header">
+                    <span class="section-icon">&#9830;</span>
+                    <span class="section-title">TOTAL NETWORTH</span>
+                </div>
+                <div class="section-body">
+                    <div class="networth-display">
+                        <div class="networth-label">Estimated Value</div>
+                        <div class="networth-value">$<span id="networthValue">0</span><span class="networth-currency">USD</span></div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="share-section" id="shareSection">
-                        <div class="share-label">Share Profile Link</div>
-                        <div class="share-url-box">
-                            <div class="share-url" id="shareUrl">Loading...</div>
-                            <button class="share-copy-btn" id="copyBtn">COPY</button>
-                        </div>
+            <!-- Permissions Section -->
+            <div class="section-card">
+                <div class="section-header">
+                    <span class="section-icon">&#9881;</span>
+                    <span class="section-title">PERMISSIONS</span>
+                </div>
+                <div class="section-body">
+                    <div class="permissions-list" id="permissionsList">
+                        <!-- Filled by JS -->
                     </div>
+                </div>
+            </div>
 
-                    <button class="edit-profile-btn" id="editBtn" style="display: none;" onclick="window.location.href='auth.html'">
-                        EDIT PROFILE
-                    </button>
+            <!-- Achievements Section -->
+            <div class="section-card">
+                <div class="section-header">
+                    <span class="section-icon">&#127942;</span>
+                    <span class="section-title">ACHIEVEMENTS</span>
+                </div>
+                <div class="section-body">
+                    <div class="achievements-grid" id="achievementsGrid">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Found Merch Section -->
+            <div class="section-card">
+                <div class="section-header">
+                    <span class="section-icon">&#128230;</span>
+                    <span class="section-title">FOUND MERCH</span>
+                </div>
+                <div class="section-body">
+                    <div class="merch-list" id="merchList">
+                        <!-- Filled by JS -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Avatar Upload Modal -->
+    <div class="avatar-modal" id="avatarModal">
+        <div class="avatar-modal-content">
+            <div class="avatar-modal-title">CHANGE AVATAR</div>
+            <div class="avatar-modal-preview" id="avatarModalPreview">
+                <span>?</span>
+            </div>
+            <input type="file" id="avatarModalInput" accept="image/*" style="display:none">
+            <button class="avatar-modal-btn primary" id="selectAvatarBtn">SELECT IMAGE</button>
+            <div class="avatar-modal-btns">
+                <button class="avatar-modal-btn primary" id="saveAvatarBtn" style="display:none">SAVE</button>
+                <button class="avatar-modal-btn secondary" id="cancelAvatarBtn">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Achievements definitions
+        const ACHIEVEMENTS = [
+            { id: 'first_search', name: 'First Blood', desc: 'Complete your first search', icon: '&#128269;', check: u => (u.searches || 0) >= 1 },
+            { id: 'searcher_10', name: 'Searcher', desc: 'Complete 10 searches', icon: '&#128270;', check: u => (u.searches || 0) >= 10 },
+            { id: 'hunter_50', name: 'Hunter', desc: 'Complete 50 searches', icon: '&#127919;', check: u => (u.searches || 0) >= 50 },
+            { id: 'veteran_100', name: 'Veteran', desc: 'Complete 100 searches', icon: '&#127894;', check: u => (u.searches || 0) >= 100 },
+            { id: 'elite_500', name: 'Elite Agent', desc: 'Complete 500 searches', icon: '&#11088;', check: u => (u.searches || 0) >= 500 },
+            { id: 'first_merch', name: 'Treasure Hunter', desc: 'Find your first merch', icon: '&#128230;', check: u => (u.foundMerch || []).length >= 1 },
+            { id: 'collector_5', name: 'Collector', desc: 'Find 5 merch items', icon: '&#127873;', check: u => (u.foundMerch || []).length >= 5 },
+            { id: 'hoarder_20', name: 'Hoarder', desc: 'Find 20 merch items', icon: '&#128176;', check: u => (u.foundMerch || []).length >= 20 },
+            { id: 'week_active', name: 'Dedicated', desc: 'Be active for 7 days', icon: '&#128197;', check: u => daysSince(u.registeredAt) >= 7 },
+            { id: 'month_active', name: 'Loyal Agent', desc: 'Be active for 30 days', icon: '&#127775;', check: u => daysSince(u.registeredAt) >= 30 },
+            { id: 'founder', name: 'Founder', desc: 'Register with ALPHA/BETA code', icon: '&#128081;', check: u => u.redeemCode && (u.redeemCode.includes('ALPHA') || u.redeemCode.includes('BETA')) },
+            { id: 'vip', name: 'VIP Access', desc: 'Have VIP status', icon: '&#128142;', check: u => u.redeemCode && (u.redeemCode.includes('EL1TE') || u.redeemCode.includes('VIP')) },
+        ];
+
+        // Permissions definitions
+        const PERMISSIONS = [
+            { id: 'parser', name: 'Multi-Engine Parser', check: () => true },
+            { id: 'search', name: 'Advanced Search', check: () => true },
+            { id: 'export', name: 'Export Results', check: u => getAccessLevel(u) !== 'STANDARD' },
+            { id: 'api', name: 'API Access', check: u => getAccessLevel(u) === 'FOUNDER' },
+            { id: 'priority', name: 'Priority Queue', check: u => getAccessLevel(u) !== 'STANDARD' },
+            { id: 'bulk', name: 'Bulk Operations', check: u => getAccessLevel(u) === 'FOUNDER' },
+        ];
+
         // LocalStorage functions
         function getUsers() {
             const users = localStorage.getItem('merch_dept_users');
             return users ? JSON.parse(users) : [];
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('merch_dept_users', JSON.stringify(users));
         }
 
         function getCurrentUser() {
@@ -505,50 +985,78 @@
             return user ? JSON.parse(user) : null;
         }
 
-        // Get user by ID or nickname
+        function setCurrentUser(user) {
+            if (user) {
+                localStorage.setItem('merch_dept_current_user', JSON.stringify(user));
+            } else {
+                localStorage.removeItem('merch_dept_current_user');
+            }
+        }
+
         function findUser(identifier) {
             const users = getUsers();
-            // Try to find by ID first
             let user = users.find(u => u.id.toString() === identifier);
             if (!user) {
-                // Try to find by nickname (case insensitive)
                 user = users.find(u => u.nickname.toLowerCase() === identifier.toLowerCase());
             }
             return user;
         }
 
-        // Format date
+        // Helpers
         function formatDate(dateStr) {
             const date = new Date(dateStr);
-            const options = { year: 'numeric', month: 'short', day: 'numeric' };
-            return date.toLocaleDateString('en-US', options);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
         }
 
-        // Calculate days since registration
         function daysSince(dateStr) {
-            const regDate = new Date(dateStr);
-            const now = new Date();
-            return Math.floor((now - regDate) / (1000 * 60 * 60 * 24));
+            return Math.floor((new Date() - new Date(dateStr)) / (1000 * 60 * 60 * 24));
         }
 
-        // Calculate rank based on searches
         function getRank(searches) {
-            if (searches >= 1000) return 'ELITE';
-            if (searches >= 500) return 'VETERAN';
-            if (searches >= 100) return 'ADVANCED';
-            if (searches >= 50) return 'REGULAR';
-            if (searches >= 10) return 'ROOKIE';
+            if (searches >= 1000) return 'LEGEND';
+            if (searches >= 500) return 'ELITE';
+            if (searches >= 100) return 'VETERAN';
+            if (searches >= 50) return 'ADVANCED';
+            if (searches >= 10) return 'REGULAR';
             return 'NEWBIE';
+        }
+
+        function getTitle(user) {
+            const level = getAccessLevel(user);
+            if (level === 'FOUNDER') return 'FOUNDING MEMBER';
+            if (level === 'VIP') return 'VIP AGENT';
+            return 'AGENT';
+        }
+
+        function getAccessLevel(user) {
+            const code = user.redeemCode || '';
+            if (code.includes('ALPHA') || code.includes('BETA')) return 'FOUNDER';
+            if (code.includes('EL1TE') || code.includes('VIP')) return 'VIP';
+            return 'STANDARD';
+        }
+
+        function formatMoney(value) {
+            return value.toLocaleString('en-US');
+        }
+
+        function calculateNetworth(user) {
+            const merch = user.foundMerch || [];
+            return merch.reduce((sum, item) => sum + (item.value || 0), 0);
         }
 
         // Display profile
         function displayProfile(user, isOwn) {
             document.getElementById('loadingState').style.display = 'none';
             document.getElementById('errorState').style.display = 'none';
-            document.getElementById('profileContent').style.display = 'block';
+            document.getElementById('profilePage').style.display = 'grid';
+
+            const userCard = document.getElementById('userCard');
+            if (isOwn) {
+                userCard.classList.add('own-profile');
+            }
 
             // Avatar
-            const avatarEl = document.getElementById('profileAvatar');
+            const avatarEl = document.getElementById('userAvatar');
             if (user.avatar) {
                 avatarEl.innerHTML = `<img src="${user.avatar}" alt="avatar">`;
             } else {
@@ -556,49 +1064,164 @@
             }
 
             // Basic info
-            document.getElementById('profileNickname').textContent = user.nickname;
-            document.getElementById('profileId').textContent = `ID: ${user.id}`;
+            document.getElementById('userNickname').textContent = user.nickname;
+            document.getElementById('userTitle').textContent = getTitle(user);
+            document.getElementById('memberSince').textContent = formatDate(user.registeredAt);
+            document.getElementById('userRank').textContent = getRank(user.searches || 0);
+            document.getElementById('userId').textContent = user.id;
 
-            // Stats
-            document.getElementById('statSearches').textContent = user.searches || 0;
-            document.getElementById('statDays').textContent = daysSince(user.registeredAt);
-            document.getElementById('statRank').textContent = getRank(user.searches || 0);
-
-            // Info rows
-            document.getElementById('infoJoined').textContent = formatDate(user.registeredAt);
-
-            // Access level based on redeem code
-            const code = user.redeemCode || '';
-            let accessLevel = 'STANDARD';
-            if (code.includes('ALPHA') || code.includes('BETA')) {
-                accessLevel = 'FOUNDER';
-            } else if (code.includes('EL1TE') || code.includes('VIP')) {
-                accessLevel = 'VIP';
-            }
-            document.getElementById('infoAccess').textContent = accessLevel;
+            // Access badge
+            const accessLevel = getAccessLevel(user);
+            const badge = document.getElementById('accessBadge');
+            badge.textContent = accessLevel;
+            badge.className = 'access-badge ' + accessLevel.toLowerCase();
 
             // Share URL
-            const baseUrl = window.location.origin + window.location.pathname.replace('profile.html', '');
-            const shareUrl = `${baseUrl}profile.html?user=${encodeURIComponent(user.nickname)}`;
-            document.getElementById('shareUrl').textContent = shareUrl;
+            const shareUrl = window.location.origin + '/profile.html?user=' + encodeURIComponent(user.nickname);
+            document.getElementById('shareInput').value = shareUrl;
 
-            // Own profile features
-            if (isOwn) {
-                document.getElementById('ownBadge').style.display = 'inline-block';
-                document.getElementById('editBtn').style.display = 'block';
+            // Stats
+            const searches = user.searches || 0;
+            const days = daysSince(user.registeredAt);
+            const merchFound = (user.foundMerch || []).length;
+            const unlockedAchievements = ACHIEVEMENTS.filter(a => a.check(user)).length;
+
+            document.getElementById('statSearches').textContent = searches;
+            document.getElementById('statDays').textContent = days;
+            document.getElementById('statMerch').textContent = merchFound;
+            document.getElementById('statAchievements').textContent = unlockedAchievements + '/' + ACHIEVEMENTS.length;
+
+            // Networth
+            document.getElementById('networthValue').textContent = formatMoney(calculateNetworth(user));
+
+            // Permissions
+            const permissionsList = document.getElementById('permissionsList');
+            permissionsList.innerHTML = PERMISSIONS.map(perm => {
+                const granted = perm.check(user);
+                return `
+                    <div class="permission-item ${granted ? '' : 'denied'}">
+                        <span class="permission-icon ${granted ? 'granted' : 'denied'}">${granted ? '&#10003;' : '&#10007;'}</span>
+                        <span class="permission-text">${perm.name}</span>
+                    </div>
+                `;
+            }).join('');
+
+            // Achievements
+            const achievementsGrid = document.getElementById('achievementsGrid');
+            achievementsGrid.innerHTML = ACHIEVEMENTS.map(ach => {
+                const unlocked = ach.check(user);
+                return `
+                    <div class="achievement ${unlocked ? 'unlocked' : 'locked'}">
+                        <div class="achievement-icon">${ach.icon}</div>
+                        <div class="achievement-name">${ach.name}</div>
+                        <div class="achievement-desc">${ach.desc}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // Merch list
+            const merchList = document.getElementById('merchList');
+            const foundMerch = user.foundMerch || [];
+            if (foundMerch.length === 0) {
+                merchList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">&#128230;</div>
+                        <div class="empty-state-text">No merch found yet</div>
+                    </div>
+                `;
+            } else {
+                merchList.innerHTML = foundMerch.map(item => `
+                    <div class="merch-item">
+                        <div class="merch-info">
+                            <div class="merch-icon">&#128230;</div>
+                            <div>
+                                <div class="merch-name">${item.name || 'Unknown Item'}</div>
+                                <div class="merch-date">${item.date ? formatDate(item.date) : 'Unknown date'}</div>
+                            </div>
+                        </div>
+                        <div class="merch-value">$${formatMoney(item.value || 0)}</div>
+                    </div>
+                `).join('');
             }
         }
 
-        // Show error state
         function showError() {
             document.getElementById('loadingState').style.display = 'none';
-            document.getElementById('errorState').style.display = 'block';
-            document.getElementById('profileContent').style.display = 'none';
+            document.getElementById('errorState').style.display = 'flex';
+            document.getElementById('profilePage').style.display = 'none';
         }
 
-        // Copy URL to clipboard
-        document.getElementById('copyBtn').addEventListener('click', function() {
-            const url = document.getElementById('shareUrl').textContent;
+        // Avatar editing
+        let newAvatarData = null;
+
+        document.getElementById('avatarEditBtn').addEventListener('click', () => {
+            document.getElementById('avatarModal').classList.add('active');
+            const currentUser = getCurrentUser();
+            if (currentUser && currentUser.avatar) {
+                document.getElementById('avatarModalPreview').innerHTML = `<img src="${currentUser.avatar}" alt="avatar">`;
+            }
+        });
+
+        document.getElementById('selectAvatarBtn').addEventListener('click', () => {
+            document.getElementById('avatarModalInput').click();
+        });
+
+        document.getElementById('avatarModalInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const size = 150;
+                        canvas.width = size;
+                        canvas.height = size;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, size, size);
+                        newAvatarData = canvas.toDataURL('image/jpeg', 0.7);
+                        document.getElementById('avatarModalPreview').innerHTML = `<img src="${newAvatarData}" alt="avatar">`;
+                        document.getElementById('saveAvatarBtn').style.display = 'inline-block';
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('saveAvatarBtn').addEventListener('click', () => {
+            if (newAvatarData) {
+                const currentUser = getCurrentUser();
+                if (currentUser) {
+                    currentUser.avatar = newAvatarData;
+                    setCurrentUser(currentUser);
+
+                    // Update in users array
+                    const users = getUsers();
+                    const idx = users.findIndex(u => u.id === currentUser.id);
+                    if (idx !== -1) {
+                        users[idx].avatar = newAvatarData;
+                        saveUsers(users);
+                    }
+
+                    // Update UI
+                    document.getElementById('userAvatar').innerHTML = `<img src="${newAvatarData}" alt="avatar">`;
+                    document.getElementById('avatarModal').classList.remove('active');
+                    newAvatarData = null;
+                    document.getElementById('saveAvatarBtn').style.display = 'none';
+                }
+            }
+        });
+
+        document.getElementById('cancelAvatarBtn').addEventListener('click', () => {
+            document.getElementById('avatarModal').classList.remove('active');
+            newAvatarData = null;
+            document.getElementById('saveAvatarBtn').style.display = 'none';
+        });
+
+        // Copy share link
+        document.getElementById('shareBtn').addEventListener('click', function() {
+            const url = document.getElementById('shareInput').value;
             navigator.clipboard.writeText(url).then(() => {
                 this.textContent = 'COPIED!';
                 this.classList.add('copied');
@@ -638,6 +1261,11 @@
 
         setInterval(drawMatrix, 50);
 
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
         // Initialize
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -653,31 +1281,23 @@
             } else if (userName) {
                 targetUser = findUser(userName);
             } else if (currentUser) {
-                // No params - show current user's profile
                 targetUser = currentUser;
                 isOwnProfile = true;
             }
 
             if (targetUser) {
-                // Check if viewing own profile
                 if (currentUser && currentUser.id === targetUser.id) {
                     isOwnProfile = true;
                 }
 
                 setTimeout(() => {
                     displayProfile(targetUser, isOwnProfile);
-                }, 500); // Small delay for effect
+                }, 300);
             } else {
                 setTimeout(() => {
                     showError();
-                }, 500);
+                }, 300);
             }
-        });
-
-        // Resize handler
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
         });
     </script>
 </body>
