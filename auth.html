@@ -486,6 +486,7 @@
                     </div>
                     <div class="profile-actions">
                         <button class="profile-btn" onclick="window.location.href='index.html'">BACK TO SITE</button>
+                        <button class="profile-btn" id="viewProfileBtn">VIEW PROFILE</button>
                         <button class="profile-btn danger" id="logoutBtn">LOGOUT</button>
                     </div>
                 </div>
@@ -670,7 +671,16 @@
             saveUsedCodes(usedCodes);
 
             setCurrentUser(newUser);
-            window.location.href = 'index.html';
+            // Redirect to profile page after registration
+            window.location.href = 'profile.html?user=' + encodeURIComponent(newUser.nickname);
+        });
+
+        // View Profile
+        document.getElementById('viewProfileBtn').addEventListener('click', () => {
+            const user = getCurrentUser();
+            if (user) {
+                window.location.href = 'profile.html?user=' + encodeURIComponent(user.nickname);
+            }
         });
 
         // Logout

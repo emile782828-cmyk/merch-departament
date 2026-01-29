@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Profile | merch-departament</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #00ff41;
+            --red: #ff0040;
+            --cyan: #00d4ff;
+            --text: #e0e0e0;
+            --text-dim: #888;
+            --bg: #000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        /* Matrix background */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.08) 0px,
+                rgba(0, 0, 0, 0.08) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+        }
+
+        /* Profile Container */
+        .profile-page {
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            z-index: 10;
+            padding: 20px 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #555;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .back-link:hover {
+            color: var(--green);
+        }
+
+        .profile-card {
+            background: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
+            border: 1px solid var(--green);
+            box-shadow: 0 0 80px rgba(0, 255, 65, 0.2), inset 0 0 30px rgba(0, 255, 65, 0.03);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Glitch effect on hover */
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .profile-card:hover::before {
+            left: 100%;
+        }
+
+        .profile-header {
+            padding: 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+            position: relative;
+        }
+
+        .profile-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            color: var(--green);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 5px var(--green); }
+            50% { opacity: 0.5; box-shadow: 0 0 15px var(--green); }
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--green);
+            overflow: hidden;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.3);
+            position: relative;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-avatar .avatar-placeholder {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 255, 65, 0.1);
+            color: var(--green);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+        }
+
+        .profile-nickname {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: var(--green);
+            text-shadow: 0 0 30px var(--green);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .profile-id {
+            font-size: 0.75rem;
+            color: #444;
+            letter-spacing: 1px;
+        }
+
+        .profile-body {
+            padding: 25px 30px;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-box {
+            background: rgba(0, 255, 65, 0.03);
+            border: 1px solid rgba(0, 255, 65, 0.15);
+            padding: 15px 10px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-box:hover {
+            border-color: var(--green);
+            background: rgba(0, 255, 65, 0.08);
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--green);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .profile-info {
+            border-top: 1px solid rgba(0, 255, 65, 0.15);
+            padding-top: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #111;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #555;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+
+        .info-value.code {
+            color: var(--cyan);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Share section */
+        .share-section {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 255, 65, 0.15);
+        }
+
+        .share-label {
+            font-size: 0.7rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .share-url-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        .share-url {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #222;
+            padding: 12px 15px;
+            color: var(--cyan);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .share-copy-btn {
+            background: transparent;
+            border: 1px solid var(--green);
+            color: var(--green);
+            padding: 12px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .share-copy-btn:hover {
+            background: var(--green);
+            color: #000;
+        }
+
+        .share-copy-btn.copied {
+            background: var(--green);
+            color: #000;
+        }
+
+        /* Error State */
+        .profile-error {
+            text-align: center;
+            padding: 60px 30px;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            color: var(--red);
+            margin-bottom: 20px;
+        }
+
+        .error-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--red);
+            margin-bottom: 10px;
+        }
+
+        .error-text {
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .error-btn {
+            margin-top: 25px;
+            display: inline-block;
+            padding: 12px 30px;
+            background: transparent;
+            border: 1px solid var(--green);
+            color: var(--green);
+            font-family: 'JetBrains Mono', monospace;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .error-btn:hover {
+            background: var(--green);
+            color: #000;
+        }
+
+        /* Loading State */
+        .profile-loading {
+            text-align: center;
+            padding: 60px 30px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #111;
+            border-top-color: var(--green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        /* Own profile badge */
+        .own-profile-badge {
+            display: inline-block;
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid var(--green);
+            color: var(--green);
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            margin-top: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Edit button */
+        .edit-profile-btn {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid #333;
+            color: #666;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .edit-profile-btn:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <canvas class="matrix-bg" id="matrixBg"></canvas>
+
+    <div class="profile-page">
+        <a href="index.html" class="back-link">&larr; Back to site</a>
+
+        <div class="profile-card">
+            <!-- Loading State -->
+            <div class="profile-loading" id="loadingState">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading profile...</div>
+            </div>
+
+            <!-- Error State -->
+            <div class="profile-error" id="errorState" style="display: none;">
+                <div class="error-icon">&#x26A0;</div>
+                <div class="error-title">AGENT NOT FOUND</div>
+                <div class="error-text">The requested profile does not exist or has been terminated.</div>
+                <a href="index.html" class="error-btn">RETURN TO BASE</a>
+            </div>
+
+            <!-- Profile Content -->
+            <div id="profileContent" style="display: none;">
+                <div class="profile-header">
+                    <div class="profile-status">
+                        <div class="status-dot"></div>
+                        <span>ONLINE</span>
+                    </div>
+                    <div class="profile-avatar" id="profileAvatar">
+                        <div class="avatar-placeholder">?</div>
+                    </div>
+                    <div class="profile-nickname" id="profileNickname">Unknown</div>
+                    <div class="profile-id" id="profileId">ID: ------</div>
+                    <div class="own-profile-badge" id="ownBadge" style="display: none;">YOUR PROFILE</div>
+                </div>
+
+                <div class="profile-body">
+                    <div class="profile-stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="statSearches">0</div>
+                            <div class="stat-label">Searches</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="statDays">0</div>
+                            <div class="stat-label">Days Active</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="statRank">N/A</div>
+                            <div class="stat-label">Rank</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-info">
+                        <div class="info-row">
+                            <span class="info-label">Joined</span>
+                            <span class="info-value" id="infoJoined">Unknown</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Access Level</span>
+                            <span class="info-value code" id="infoAccess">STANDARD</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Status</span>
+                            <span class="info-value" id="infoStatus">Active</span>
+                        </div>
+                    </div>
+
+                    <div class="share-section" id="shareSection">
+                        <div class="share-label">Share Profile Link</div>
+                        <div class="share-url-box">
+                            <div class="share-url" id="shareUrl">Loading...</div>
+                            <button class="share-copy-btn" id="copyBtn">COPY</button>
+                        </div>
+                    </div>
+
+                    <button class="edit-profile-btn" id="editBtn" style="display: none;" onclick="window.location.href='auth.html'">
+                        EDIT PROFILE
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // LocalStorage functions
+        function getUsers() {
+            const users = localStorage.getItem('merch_dept_users');
+            return users ? JSON.parse(users) : [];
+        }
+
+        function getCurrentUser() {
+            const user = localStorage.getItem('merch_dept_current_user');
+            return user ? JSON.parse(user) : null;
+        }
+
+        // Get user by ID or nickname
+        function findUser(identifier) {
+            const users = getUsers();
+            // Try to find by ID first
+            let user = users.find(u => u.id.toString() === identifier);
+            if (!user) {
+                // Try to find by nickname (case insensitive)
+                user = users.find(u => u.nickname.toLowerCase() === identifier.toLowerCase());
+            }
+            return user;
+        }
+
+        // Format date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        // Calculate days since registration
+        function daysSince(dateStr) {
+            const regDate = new Date(dateStr);
+            const now = new Date();
+            return Math.floor((now - regDate) / (1000 * 60 * 60 * 24));
+        }
+
+        // Calculate rank based on searches
+        function getRank(searches) {
+            if (searches >= 1000) return 'ELITE';
+            if (searches >= 500) return 'VETERAN';
+            if (searches >= 100) return 'ADVANCED';
+            if (searches >= 50) return 'REGULAR';
+            if (searches >= 10) return 'ROOKIE';
+            return 'NEWBIE';
+        }
+
+        // Display profile
+        function displayProfile(user, isOwn) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+            document.getElementById('profileContent').style.display = 'block';
+
+            // Avatar
+            const avatarEl = document.getElementById('profileAvatar');
+            if (user.avatar) {
+                avatarEl.innerHTML = `<img src="${user.avatar}" alt="avatar">`;
+            } else {
+                avatarEl.innerHTML = `<div class="avatar-placeholder">${user.nickname.charAt(0).toUpperCase()}</div>`;
+            }
+
+            // Basic info
+            document.getElementById('profileNickname').textContent = user.nickname;
+            document.getElementById('profileId').textContent = `ID: ${user.id}`;
+
+            // Stats
+            document.getElementById('statSearches').textContent = user.searches || 0;
+            document.getElementById('statDays').textContent = daysSince(user.registeredAt);
+            document.getElementById('statRank').textContent = getRank(user.searches || 0);
+
+            // Info rows
+            document.getElementById('infoJoined').textContent = formatDate(user.registeredAt);
+
+            // Access level based on redeem code
+            const code = user.redeemCode || '';
+            let accessLevel = 'STANDARD';
+            if (code.includes('ALPHA') || code.includes('BETA')) {
+                accessLevel = 'FOUNDER';
+            } else if (code.includes('EL1TE') || code.includes('VIP')) {
+                accessLevel = 'VIP';
+            }
+            document.getElementById('infoAccess').textContent = accessLevel;
+
+            // Share URL
+            const baseUrl = window.location.origin + window.location.pathname.replace('profile.html', '');
+            const shareUrl = `${baseUrl}profile.html?user=${encodeURIComponent(user.nickname)}`;
+            document.getElementById('shareUrl').textContent = shareUrl;
+
+            // Own profile features
+            if (isOwn) {
+                document.getElementById('ownBadge').style.display = 'inline-block';
+                document.getElementById('editBtn').style.display = 'block';
+            }
+        }
+
+        // Show error state
+        function showError() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+            document.getElementById('profileContent').style.display = 'none';
+        }
+
+        // Copy URL to clipboard
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const url = document.getElementById('shareUrl').textContent;
+            navigator.clipboard.writeText(url).then(() => {
+                this.textContent = 'COPIED!';
+                this.classList.add('copied');
+                setTimeout(() => {
+                    this.textContent = 'COPY';
+                    this.classList.remove('copied');
+                }, 2000);
+            });
+        });
+
+        // Matrix background
+        const canvas = document.getElementById('matrixBg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = '01';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00ff41';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('id');
+            const userName = urlParams.get('user');
+            const currentUser = getCurrentUser();
+
+            let targetUser = null;
+            let isOwnProfile = false;
+
+            if (userId) {
+                targetUser = findUser(userId);
+            } else if (userName) {
+                targetUser = findUser(userName);
+            } else if (currentUser) {
+                // No params - show current user's profile
+                targetUser = currentUser;
+                isOwnProfile = true;
+            }
+
+            if (targetUser) {
+                // Check if viewing own profile
+                if (currentUser && currentUser.id === targetUser.id) {
+                    isOwnProfile = true;
+                }
+
+                setTimeout(() => {
+                    displayProfile(targetUser, isOwnProfile);
+                }, 500); // Small delay for effect
+            } else {
+                setTimeout(() => {
+                    showError();
+                }, 500);
+            }
+        });
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

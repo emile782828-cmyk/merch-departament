@@ -2914,7 +2914,7 @@
         <section class="hero">
             <div class="hero-content">
                 <div class="hero-title-container" id="titleContainer">
-                    <h1 class="hero-title" id="heroTitle"></h1>
+                    <h1 class="hero-title" id="heroTitle">merch-departament</h1>
                 </div>
 
                 <p class="hero-subtitle">
@@ -3081,10 +3081,10 @@
 
     <!-- User Profile Mini (top right) -->
     <div class="user-profile-mini" id="userProfileMini">
-        <div class="user-avatar-mini" id="userAvatarMini">
+        <a href="#" class="user-avatar-mini" id="userAvatarMini" title="View Profile">
             <span id="userAvatarMiniContent">?</span>
-        </div>
-        <div class="user-name-mini" id="userNameMini">Guest</div>
+        </a>
+        <a href="#" class="user-name-mini" id="userNameMini" style="text-decoration: none;">Guest</a>
         <button class="user-logout-btn" id="logoutBtn">LOGOUT</button>
     </div>
 
@@ -3504,8 +3504,22 @@
 
         let isBooting = false;
 
-        parsingBtn.addEventListener('click', async () => {
+        // Boot sequence function
+        async function runBootSequence() {
             if (isBooting) return;
+
+            // TEMPORARILY DISABLED FOR TESTING
+            // Check if user is logged in
+            // const currentUser = localStorage.getItem('merch_dept_current_user');
+            // if (!currentUser) {
+            //     window.location.href = 'auth.html';
+            //     return;
+            // }
+
+            if (!mainContent || !blackout || !bootTerminal || !bootBody) {
+                console.log('Boot elements not found');
+                return;
+            }
             isBooting = true;
 
             // 1. Blackout
@@ -3587,19 +3601,28 @@
                 engineStatus.textContent = 'ENGINE::IDLE';
                 isBooting = false;
             }, 3000);
-        });
+        }
+
+        // Add click handler to parsing button
+        if (parsingBtn) {
+            parsingBtn.addEventListener('click', runBootSequence);
+        }
 
         // ========== HACKER STATS ==========
         const pktCount = document.getElementById('pktCount');
         const netStat = document.getElementById('netStat');
 
-        setInterval(() => {
-            pktCount.textContent = parseInt(pktCount.textContent) + Math.floor(Math.random() * 10);
-        }, 500);
+        if (pktCount) {
+            setInterval(() => {
+                pktCount.textContent = parseInt(pktCount.textContent) + Math.floor(Math.random() * 10);
+            }, 500);
+        }
 
-        setInterval(() => {
-            netStat.textContent = `192.168.${Math.floor(Math.random()*255)}.***`;
-        }, 3000);
+        if (netStat) {
+            setInterval(() => {
+                netStat.textContent = `192.168.${Math.floor(Math.random()*255)}.***`;
+            }, 3000);
+        }
 
         // ========== CARD STREAM CONTROLLER ==========
         class CardStreamController {
@@ -3934,16 +3957,22 @@
         let cardStreamController;
         let particleScannerInstance;
 
-        // Wait for main content to be visible
+        // Initialize card stream
         const initCardStream = () => {
-            if (document.getElementById('cardLine')) {
+            const cardLine = document.getElementById('cardLine');
+            const cardStream = document.getElementById('cardStream');
+            console.log('Card elements:', { cardLine, cardStream });
+            if (cardLine && cardStream) {
                 cardStreamController = new CardStreamController();
                 particleScannerInstance = new ParticleScanner();
+                console.log('Card stream initialized');
+            } else {
+                console.log('Card elements not found');
             }
         };
 
-        // Initialize card stream immediately (intro removed)
-        initCardStream();
+        // Initialize after a short delay to ensure DOM is ready
+        setTimeout(initCardStream, 100);
 
         // ========== HUD ANIMATION DYNAMIC ELEMENTS ==========
         function initHudAnimation() {
@@ -4246,7 +4275,6 @@
         const parserResultsCount = document.getElementById('parserResultsCount');
         const parserResultsQuery = document.getElementById('parserResultsQuery');
         const parserVariationsList = document.getElementById('parserVariationsList');
-        const parsingBtn = document.getElementById('parsingBtn');
 
         // Search engines configuration
         const searchEngines = {
@@ -4497,7 +4525,7 @@
             }
         });
 
-        // ========== SIMPLE AUTH CHECK ==========
+        // ========== AUTH SYSTEM ==========
 
         // Get current user from localStorage
         function getCurrentUser() {
@@ -4510,26 +4538,47 @@
             return getCurrentUser() !== null;
         }
 
-        // Update profile mini display
+        // Elements
         const userProfileMini = document.getElementById('userProfileMini');
         const userAvatarMiniContent = document.getElementById('userAvatarMiniContent');
         const userNameMini = document.getElementById('userNameMini');
         const logoutBtn = document.getElementById('logoutBtn');
+        const navButtons = document.querySelector('.nav-buttons');
 
-        function updateProfileMini() {
+        // Update UI based on login state
+        function updateAuthUI() {
             const user = getCurrentUser();
+
+            // Update profile mini
             if (user && userProfileMini) {
                 userProfileMini.classList.add('active');
-                if (userNameMini) userNameMini.textContent = user.nickname;
+                if (userNameMini) {
+                    userNameMini.textContent = user.nickname;
+                    userNameMini.href = 'profile.html?user=' + encodeURIComponent(user.nickname);
+                }
                 if (userAvatarMiniContent) {
                     if (user.avatar) {
-                        userAvatarMiniContent.innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;object-fit:cover;">`;
+                        userAvatarMiniContent.innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
                     } else {
                         userAvatarMiniContent.textContent = user.nickname.charAt(0).toUpperCase();
                     }
                 }
+                // Update avatar link
+                const avatarLink = document.getElementById('userAvatarMini');
+                if (avatarLink) {
+                    avatarLink.href = 'profile.html?user=' + encodeURIComponent(user.nickname);
+                }
             } else if (userProfileMini) {
                 userProfileMini.classList.remove('active');
+            }
+
+            // Hide/show nav buttons (Login/Register)
+            if (navButtons) {
+                if (user) {
+                    navButtons.style.display = 'none';
+                } else {
+                    navButtons.style.display = 'flex';
+                }
             }
         }
 
@@ -4537,33 +4586,12 @@
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => {
                 localStorage.removeItem('merch_dept_current_user');
-                updateProfileMini();
+                updateAuthUI();
             });
         }
 
-        // Profile click -> go to auth page
-        const userAvatarMini = document.getElementById('userAvatarMini');
-        if (userAvatarMini) {
-            userAvatarMini.addEventListener('click', () => {
-                window.location.href = 'auth.html?tab=profile';
-            });
-        }
-
-        // Parser button auth check
-        const parsingBtnAuth = document.getElementById('parsing-btn');
-        if (parsingBtnAuth) {
-            parsingBtnAuth.addEventListener('click', (e) => {
-                if (!isLoggedIn()) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.location.href = 'auth.html';
-                    return false;
-                }
-            });
-        }
-
-        // Init
-        updateProfileMini();
+        // Initialize auth UI
+        updateAuthUI();
 
     </script>
 </body>
