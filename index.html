@@ -2163,17 +2163,7 @@
 
         /* ========== INTRO SCREEN ========== */
         .intro-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 100000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s;
+            display: none;
         }
 
         .intro-screen.hidden {
@@ -2227,21 +2217,9 @@
             text-shadow: 0 0 10px var(--red-glow);
         }
 
-        /* ========== POWERSHELL TERMINAL ========== */
+        /* ========== POWERSHELL TERMINAL (DISABLED) ========== */
         .powershell {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 99999;
-            display: none;
-            flex-direction: column;
-        }
-
-        .powershell.active {
-            display: flex;
+            display: none !important;
         }
 
         .ps-header {
@@ -2512,7 +2490,7 @@
     <div class="matrix-overlay"></div>
 
     <!-- Main content wrapper -->
-    <div class="main-content intro-hidden" id="mainContent">
+    <div class="main-content" id="mainContent">
         <!-- Hacker Stats -->
         <div class="hacker-stats">
             <div>SYS:<span>ACTIVE</span></div>
