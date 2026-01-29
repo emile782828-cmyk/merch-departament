@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRYPTO EXCHANGES | MERCH DEPARTMENT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff0033;
+            --secondary: #ff3366;
+            --glow: #ff0033;
+            --dark: #0a0a0a;
+            --darker: #050505;
+            --text: #ffffff;
+            --text-dim: #888888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--darker);
+            color: var(--text);
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Lightning Animation Container */
+        .lightning-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .lightning-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Hacker Text Animation */
+        .hacker-text-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        .hacker-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 8vw;
+            font-weight: 900;
+            color: var(--primary);
+            text-shadow:
+                0 0 10px var(--primary),
+                0 0 20px var(--primary),
+                0 0 40px var(--primary),
+                0 0 80px var(--primary);
+            letter-spacing: 0.2em;
+            white-space: nowrap;
+            animation: glitchText 3s infinite;
+        }
+
+        @keyframes glitchText {
+            0%, 90%, 100% {
+                opacity: 1;
+                transform: translate(0);
+            }
+            91% {
+                opacity: 0.8;
+                transform: translate(-2px, 1px);
+            }
+            92% {
+                opacity: 0.6;
+                transform: translate(2px, -1px);
+            }
+            93% {
+                opacity: 1;
+                transform: translate(0);
+            }
+        }
+
+        /* Header */
+        .header {
+            position: relative;
+            z-index: 10;
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 0, 51, 0.3);
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            text-decoration: none;
+            text-shadow: 0 0 20px var(--glow);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+            color: var(--dark);
+            box-shadow: 0 0 30px var(--glow);
+        }
+
+        /* Main Content */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            padding: 50px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px var(--glow);
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            margin-bottom: 50px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 50px;
+            padding: 25px;
+            background: rgba(255, 0, 51, 0.05);
+            border: 1px solid rgba(255, 0, 51, 0.2);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            text-shadow: 0 0 20px var(--glow);
+        }
+
+        .stat-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 12px 25px;
+            background: transparent;
+            border: 1px solid rgba(255, 0, 51, 0.3);
+            color: var(--text-dim);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-tab:hover,
+        .filter-tab.active {
+            background: var(--primary);
+            color: var(--dark);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--glow);
+        }
+
+        /* Exchanges Grid */
+        .exchanges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .exchange-card {
+            background: rgba(10, 10, 10, 0.8);
+            border: 1px solid rgba(255, 0, 51, 0.2);
+            padding: 25px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exchange-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            transition: left 0.5s;
+        }
+
+        .exchange-card:hover::before {
+            left: 100%;
+        }
+
+        .exchange-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(255, 0, 51, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .exchange-rank {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: var(--primary);
+            opacity: 0.6;
+        }
+
+        .exchange-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .exchange-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255, 0, 51, 0.1);
+            border: 1px solid rgba(255, 0, 51, 0.3);
+            color: var(--primary);
+            font-size: 0.7rem;
+            margin-bottom: 15px;
+        }
+
+        .exchange-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 0, 51, 0.1);
+        }
+
+        .exchange-info-item {
+            text-align: center;
+        }
+
+        .exchange-info-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--primary);
+        }
+
+        .exchange-info-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 3px;
+        }
+
+        .exchange-link {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .exchange-link:hover {
+            background: var(--primary);
+            color: var(--dark);
+            box-shadow: 0 0 20px var(--glow);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .hacker-title {
+                font-size: 12vw;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Lightning Animation -->
+    <div class="lightning-container">
+        <canvas class="lightning-canvas" id="lightningCanvas"></canvas>
+    </div>
+
+    <!-- Hacker Text Background -->
+    <div class="hacker-text-container">
+        <div class="hacker-title" id="hackerTitle">CRYPTO EXCHANGES</div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="index.html" class="logo">MERCH_DEPT</a>
+        <a href="index.html" class="back-btn">
+            <span>&lt;</span> BACK TO HQ
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <h1 class="page-title">CRYPTO EXCHANGES</h1>
+        <p class="page-subtitle">
+            Complete registry of cryptocurrency exchanges worldwide. Access trading platforms,
+            check volumes, and connect to the global crypto market infrastructure.
+        </p>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value">250+</div>
+                <div class="stat-label">EXCHANGES LISTED</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">$150B+</div>
+                <div class="stat-label">DAILY VOLUME</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">10K+</div>
+                <div class="stat-label">TRADING PAIRS</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">24/7</div>
+                <div class="stat-label">MARKET ACCESS</div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">ALL EXCHANGES</button>
+            <button class="filter-tab" data-filter="cex">CENTRALIZED</button>
+            <button class="filter-tab" data-filter="dex">DECENTRALIZED</button>
+            <button class="filter-tab" data-filter="derivatives">DERIVATIVES</button>
+        </div>
+
+        <!-- Exchanges Grid -->
+        <div class="exchanges-grid" id="exchangesGrid">
+            <!-- Exchanges will be populated by JavaScript -->
+        </div>
+    </main>
+
+    <script>
+        // Lightning Animation
+        const canvas = document.getElementById('lightningCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Lightning {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = 0;
+                this.segments = [];
+                this.alpha = 1;
+                this.fade = 0.02 + Math.random() * 0.03;
+                this.generateBolt();
+            }
+
+            generateBolt() {
+                let x = this.x;
+                let y = this.y;
+                const targetY = canvas.height * (0.3 + Math.random() * 0.7);
+
+                while (y < targetY) {
+                    const newX = x + (Math.random() - 0.5) * 100;
+                    const newY = y + 10 + Math.random() * 30;
+                    this.segments.push({ x1: x, y1: y, x2: newX, y2: newY });
+
+                    // Branch
+                    if (Math.random() < 0.3) {
+                        const branchX = newX + (Math.random() - 0.5) * 80;
+                        const branchY = newY + 20 + Math.random() * 40;
+                        this.segments.push({ x1: newX, y1: newY, x2: branchX, y2: branchY, branch: true });
+                    }
+
+                    x = newX;
+                    y = newY;
+                }
+            }
+
+            draw() {
+                ctx.strokeStyle = `rgba(255, 0, 51, ${this.alpha})`;
+                ctx.shadowColor = '#ff0033';
+                ctx.shadowBlur = 20;
+                ctx.lineWidth = 2;
+
+                this.segments.forEach(seg => {
+                    ctx.beginPath();
+                    ctx.moveTo(seg.x1, seg.y1);
+                    ctx.lineTo(seg.x2, seg.y2);
+                    ctx.stroke();
+
+                    // Inner glow
+                    ctx.strokeStyle = `rgba(255, 100, 100, ${this.alpha * 0.5})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    ctx.strokeStyle = `rgba(255, 0, 51, ${this.alpha})`;
+                    ctx.lineWidth = 2;
+                });
+            }
+
+            update() {
+                this.alpha -= this.fade;
+                if (this.alpha <= 0) {
+                    this.reset();
+                }
+            }
+        }
+
+        // Hacker text effect
+        const hackerChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*(){}[]<>?/\\|~`';
+        const originalText = 'CRYPTO EXCHANGES';
+        const hackerTitle = document.getElementById('hackerTitle');
+
+        function glitchText() {
+            let result = '';
+            for (let i = 0; i < originalText.length; i++) {
+                if (Math.random() < 0.1) {
+                    result += hackerChars[Math.floor(Math.random() * hackerChars.length)];
+                } else {
+                    result += originalText[i];
+                }
+            }
+            hackerTitle.textContent = result;
+
+            setTimeout(() => {
+                hackerTitle.textContent = originalText;
+            }, 100);
+        }
+
+        setInterval(glitchText, 2000);
+
+        // Lightning bolts
+        const lightnings = [];
+        for (let i = 0; i < 3; i++) {
+            lightnings.push(new Lightning());
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            lightnings.forEach(lightning => {
+                lightning.draw();
+                lightning.update();
+            });
+
+            // Random new lightning
+            if (Math.random() < 0.02) {
+                lightnings[Math.floor(Math.random() * lightnings.length)].reset();
+            }
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Top 250 Exchanges Data
+        const exchanges = [
+            { rank: 1, name: "Binance", type: "CEX", volume: "76.3B", pairs: 1893, url: "https://www.binance.com" },
+            { rank: 2, name: "Coinbase", type: "CEX", volume: "7.2B", pairs: 582, url: "https://www.coinbase.com" },
+            { rank: 3, name: "Bybit", type: "CEX", volume: "12.8B", pairs: 1245, url: "https://www.bybit.com" },
+            { rank: 4, name: "OKX", type: "CEX", volume: "8.9B", pairs: 1567, url: "https://www.okx.com" },
+            { rank: 5, name: "Upbit", type: "CEX", volume: "4.1B", pairs: 312, url: "https://upbit.com" },
+            { rank: 6, name: "Kraken", type: "CEX", volume: "2.8B", pairs: 734, url: "https://www.kraken.com" },
+            { rank: 7, name: "KuCoin", type: "CEX", volume: "3.2B", pairs: 1423, url: "https://www.kucoin.com" },
+            { rank: 8, name: "Bitfinex", type: "CEX", volume: "1.5B", pairs: 456, url: "https://www.bitfinex.com" },
+            { rank: 9, name: "Gate.io", type: "CEX", volume: "4.7B", pairs: 2834, url: "https://www.gate.io" },
+            { rank: 10, name: "HTX", type: "CEX", volume: "3.8B", pairs: 1234, url: "https://www.htx.com" },
+            { rank: 11, name: "Bitstamp", type: "CEX", volume: "0.8B", pairs: 189, url: "https://www.bitstamp.net" },
+            { rank: 12, name: "MEXC", type: "CEX", volume: "5.2B", pairs: 2456, url: "https://www.mexc.com" },
+            { rank: 13, name: "Crypto.com", type: "CEX", volume: "2.1B", pairs: 367, url: "https://crypto.com" },
+            { rank: 14, name: "Bithumb", type: "CEX", volume: "1.9B", pairs: 245, url: "https://www.bithumb.com" },
+            { rank: 15, name: "Gemini", type: "CEX", volume: "0.6B", pairs: 178, url: "https://www.gemini.com" },
+            { rank: 16, name: "Bitget", type: "CEX", volume: "4.3B", pairs: 892, url: "https://www.bitget.com" },
+            { rank: 17, name: "Uniswap V3", type: "DEX", volume: "2.1B", pairs: 5000, url: "https://app.uniswap.org" },
+            { rank: 18, name: "dYdX", type: "DEX", volume: "1.8B", pairs: 67, url: "https://dydx.exchange" },
+            { rank: 19, name: "Raydium", type: "DEX", volume: "0.9B", pairs: 3400, url: "https://raydium.io" },
+            { rank: 20, name: "Jupiter", type: "DEX", volume: "1.2B", pairs: 4500, url: "https://jup.ag" },
+            { rank: 21, name: "BitMEX", type: "Derivatives", volume: "1.1B", pairs: 145, url: "https://www.bitmex.com" },
+            { rank: 22, name: "Phemex", type: "CEX", volume: "1.4B", pairs: 324, url: "https://phemex.com" },
+            { rank: 23, name: "Deribit", type: "Derivatives", volume: "2.3B", pairs: 89, url: "https://www.deribit.com" },
+            { rank: 24, name: "LBank", type: "CEX", volume: "2.7B", pairs: 1567, url: "https://www.lbank.com" },
+            { rank: 25, name: "Bitrue", type: "CEX", volume: "1.2B", pairs: 789, url: "https://www.bitrue.com" },
+            { rank: 26, name: "WhiteBIT", type: "CEX", volume: "1.8B", pairs: 456, url: "https://whitebit.com" },
+            { rank: 27, name: "BingX", type: "CEX", volume: "2.4B", pairs: 678, url: "https://bingx.com" },
+            { rank: 28, name: "Pancakeswap V3", type: "DEX", volume: "0.8B", pairs: 4200, url: "https://pancakeswap.finance" },
+            { rank: 29, name: "Curve Finance", type: "DEX", volume: "0.5B", pairs: 890, url: "https://curve.fi" },
+            { rank: 30, name: "Coinone", type: "CEX", volume: "0.4B", pairs: 198, url: "https://coinone.co.kr" },
+            { rank: 31, name: "Korbit", type: "CEX", volume: "0.3B", pairs: 156, url: "https://www.korbit.co.kr" },
+            { rank: 32, name: "Bitso", type: "CEX", volume: "0.5B", pairs: 89, url: "https://bitso.com" },
+            { rank: 33, name: "BitFlyer", type: "CEX", volume: "0.7B", pairs: 34, url: "https://bitflyer.com" },
+            { rank: 34, name: "Coincheck", type: "CEX", volume: "0.4B", pairs: 27, url: "https://coincheck.com" },
+            { rank: 35, name: "Zaif", type: "CEX", volume: "0.1B", pairs: 18, url: "https://zaif.jp" },
+            { rank: 36, name: "Poloniex", type: "CEX", volume: "0.6B", pairs: 567, url: "https://poloniex.com" },
+            { rank: 37, name: "AscendEX", type: "CEX", volume: "0.8B", pairs: 456, url: "https://ascendex.com" },
+            { rank: 38, name: "BitMart", type: "CEX", volume: "1.1B", pairs: 1234, url: "https://www.bitmart.com" },
+            { rank: 39, name: "CoinEx", type: "CEX", volume: "0.9B", pairs: 987, url: "https://www.coinex.com" },
+            { rank: 40, name: "ProBit", type: "CEX", volume: "0.4B", pairs: 678, url: "https://www.probit.com" },
+            { rank: 41, name: "Biconomy", type: "CEX", volume: "0.7B", pairs: 345, url: "https://www.biconomy.com" },
+            { rank: 42, name: "XT.com", type: "CEX", volume: "1.3B", pairs: 1456, url: "https://www.xt.com" },
+            { rank: 43, name: "DigiFinex", type: "CEX", volume: "0.6B", pairs: 534, url: "https://www.digifinex.com" },
+            { rank: 44, name: "Hotcoin", type: "CEX", volume: "0.5B", pairs: 423, url: "https://www.hotcoin.com" },
+            { rank: 45, name: "BigONE", type: "CEX", volume: "0.3B", pairs: 312, url: "https://www.bigone.com" },
+            { rank: 46, name: "Balancer V2", type: "DEX", volume: "0.3B", pairs: 1200, url: "https://balancer.fi" },
+            { rank: 47, name: "SushiSwap", type: "DEX", volume: "0.2B", pairs: 2300, url: "https://www.sushi.com" },
+            { rank: 48, name: "Orca", type: "DEX", volume: "0.4B", pairs: 890, url: "https://www.orca.so" },
+            { rank: 49, name: "Trader Joe", type: "DEX", volume: "0.15B", pairs: 456, url: "https://traderjoexyz.com" },
+            { rank: 50, name: "Velodrome", type: "DEX", volume: "0.12B", pairs: 345, url: "https://velodrome.finance" },
+            { rank: 51, name: "GMX", type: "Derivatives", volume: "0.8B", pairs: 23, url: "https://gmx.io" },
+            { rank: 52, name: "Synthetix", type: "Derivatives", volume: "0.3B", pairs: 45, url: "https://synthetix.io" },
+            { rank: 53, name: "Perpetual Protocol", type: "Derivatives", volume: "0.2B", pairs: 34, url: "https://perp.com" },
+            { rank: 54, name: "Bilaxy", type: "CEX", volume: "0.4B", pairs: 567, url: "https://bilaxy.com" },
+            { rank: 55, name: "Tidex", type: "CEX", volume: "0.1B", pairs: 189, url: "https://tidex.com" },
+            { rank: 56, name: "BTCEX", type: "CEX", volume: "0.6B", pairs: 234, url: "https://www.btcex.com" },
+            { rank: 57, name: "Toobit", type: "CEX", volume: "0.8B", pairs: 312, url: "https://www.toobit.com" },
+            { rank: 58, name: "Deepcoin", type: "CEX", volume: "0.5B", pairs: 267, url: "https://www.deepcoin.com" },
+            { rank: 59, name: "CoinW", type: "CEX", volume: "0.9B", pairs: 456, url: "https://www.coinw.com" },
+            { rank: 60, name: "Pionex", type: "CEX", volume: "0.4B", pairs: 378, url: "https://www.pionex.com" },
+            { rank: 61, name: "Tapbit", type: "CEX", volume: "0.3B", pairs: 234, url: "https://www.tapbit.com" },
+            { rank: 62, name: "WEEX", type: "CEX", volume: "0.7B", pairs: 345, url: "https://www.weex.com" },
+            { rank: 63, name: "P2B", type: "CEX", volume: "0.2B", pairs: 567, url: "https://p2pb2b.com" },
+            { rank: 64, name: "Bitforex", type: "CEX", volume: "0.3B", pairs: 423, url: "https://www.bitforex.com" },
+            { rank: 65, name: "BTSE", type: "CEX", volume: "0.4B", pairs: 289, url: "https://www.btse.com" },
+            { rank: 66, name: "NovaDAX", type: "CEX", volume: "0.15B", pairs: 145, url: "https://www.novadax.com.br" },
+            { rank: 67, name: "Mercado Bitcoin", type: "CEX", volume: "0.2B", pairs: 178, url: "https://www.mercadobitcoin.com.br" },
+            { rank: 68, name: "Luno", type: "CEX", volume: "0.1B", pairs: 34, url: "https://www.luno.com" },
+            { rank: 69, name: "Independent Reserve", type: "CEX", volume: "0.08B", pairs: 45, url: "https://www.independentreserve.com" },
+            { rank: 70, name: "Swyftx", type: "CEX", volume: "0.12B", pairs: 312, url: "https://swyftx.com" },
+            { rank: 71, name: "CoinSpot", type: "CEX", volume: "0.15B", pairs: 378, url: "https://www.coinspot.com.au" },
+            { rank: 72, name: "Paribu", type: "CEX", volume: "0.3B", pairs: 89, url: "https://www.paribu.com" },
+            { rank: 73, name: "BtcTurk", type: "CEX", volume: "0.25B", pairs: 123, url: "https://www.btcturk.com" },
+            { rank: 74, name: "Exmo", type: "CEX", volume: "0.08B", pairs: 234, url: "https://exmo.com" },
+            { rank: 75, name: "CEX.IO", type: "CEX", volume: "0.1B", pairs: 189, url: "https://cex.io" },
+            { rank: 76, name: "Blockchain.com", type: "CEX", volume: "0.2B", pairs: 156, url: "https://www.blockchain.com" },
+            { rank: 77, name: "Rain", type: "CEX", volume: "0.05B", pairs: 67, url: "https://www.rain.com" },
+            { rank: 78, name: "BitOasis", type: "CEX", volume: "0.04B", pairs: 45, url: "https://bitoasis.net" },
+            { rank: 79, name: "CoinDCX", type: "CEX", volume: "0.15B", pairs: 234, url: "https://coindcx.com" },
+            { rank: 80, name: "WazirX", type: "CEX", volume: "0.12B", pairs: 312, url: "https://wazirx.com" },
+            { rank: 81, name: "Giottus", type: "CEX", volume: "0.03B", pairs: 178, url: "https://giottus.com" },
+            { rank: 82, name: "ZebPay", type: "CEX", volume: "0.05B", pairs: 123, url: "https://zebpay.com" },
+            { rank: 83, name: "CoinSwitch", type: "CEX", volume: "0.08B", pairs: 89, url: "https://coinswitch.co" },
+            { rank: 84, name: "Ndax", type: "CEX", volume: "0.02B", pairs: 56, url: "https://ndax.io" },
+            { rank: 85, name: "Newton", type: "CEX", volume: "0.03B", pairs: 78, url: "https://www.newton.co" },
+            { rank: 86, name: "Shakepay", type: "CEX", volume: "0.04B", pairs: 12, url: "https://shakepay.com" },
+            { rank: 87, name: "Bitbuy", type: "CEX", volume: "0.05B", pairs: 34, url: "https://bitbuy.ca" },
+            { rank: 88, name: "Wealthsimple Crypto", type: "CEX", volume: "0.06B", pairs: 67, url: "https://www.wealthsimple.com" },
+            { rank: 89, name: "Coinsquare", type: "CEX", volume: "0.02B", pairs: 23, url: "https://coinsquare.com" },
+            { rank: 90, name: "VALR", type: "CEX", volume: "0.08B", pairs: 145, url: "https://www.valr.com" },
+            { rank: 91, name: "AltCoinTrader", type: "CEX", volume: "0.01B", pairs: 34, url: "https://www.altcointrader.co.za" },
+            { rank: 92, name: "Quidax", type: "CEX", volume: "0.02B", pairs: 45, url: "https://www.quidax.com" },
+            { rank: 93, name: "Yellow Card", type: "CEX", volume: "0.03B", pairs: 23, url: "https://yellowcard.io" },
+            { rank: 94, name: "Camelot", type: "DEX", volume: "0.08B", pairs: 234, url: "https://camelot.exchange" },
+            { rank: 95, name: "Aerodrome", type: "DEX", volume: "0.15B", pairs: 456, url: "https://aerodrome.finance" },
+            { rank: 96, name: "Maverick", type: "DEX", volume: "0.06B", pairs: 123, url: "https://mav.xyz" },
+            { rank: 97, name: "Ambient", type: "DEX", volume: "0.04B", pairs: 89, url: "https://ambient.finance" },
+            { rank: 98, name: "KyberSwap", type: "DEX", volume: "0.1B", pairs: 567, url: "https://kyberswap.com" },
+            { rank: 99, name: "1inch", type: "DEX", volume: "0.3B", pairs: 3400, url: "https://1inch.io" },
+            { rank: 100, name: "Paraswap", type: "DEX", volume: "0.08B", pairs: 2300, url: "https://www.paraswap.io" },
+            { rank: 101, name: "Matcha", type: "DEX", volume: "0.12B", pairs: 2100, url: "https://matcha.xyz" },
+            { rank: 102, name: "CoW Protocol", type: "DEX", volume: "0.15B", pairs: 1800, url: "https://cow.fi" },
+            { rank: 103, name: "DODO", type: "DEX", volume: "0.05B", pairs: 890, url: "https://dodoex.io" },
+            { rank: 104, name: "Hashflow", type: "DEX", volume: "0.04B", pairs: 234, url: "https://www.hashflow.com" },
+            { rank: 105, name: "Osmosis", type: "DEX", volume: "0.2B", pairs: 567, url: "https://osmosis.zone" },
+            { rank: 106, name: "Astroport", type: "DEX", volume: "0.03B", pairs: 189, url: "https://astroport.fi" },
+            { rank: 107, name: "Terraswap", type: "DEX", volume: "0.01B", pairs: 123, url: "https://terraswap.io" },
+            { rank: 108, name: "Ref Finance", type: "DEX", volume: "0.02B", pairs: 234, url: "https://www.ref.finance" },
+            { rank: 109, name: "Minswap", type: "DEX", volume: "0.03B", pairs: 145, url: "https://minswap.org" },
+            { rank: 110, name: "SundaeSwap", type: "DEX", volume: "0.02B", pairs: 89, url: "https://sundaeswap.finance" },
+            { rank: 111, name: "WingRiders", type: "DEX", volume: "0.01B", pairs: 67, url: "https://www.wingriders.com" },
+            { rank: 112, name: "Biswap", type: "DEX", volume: "0.04B", pairs: 312, url: "https://biswap.org" },
+            { rank: 113, name: "ApeSwap", type: "DEX", volume: "0.02B", pairs: 234, url: "https://apeswap.finance" },
+            { rank: 114, name: "SpookySwap", type: "DEX", volume: "0.03B", pairs: 345, url: "https://spooky.fi" },
+            { rank: 115, name: "SpiritSwap", type: "DEX", volume: "0.01B", pairs: 189, url: "https://www.spiritswap.finance" },
+            { rank: 116, name: "Quickswap", type: "DEX", volume: "0.06B", pairs: 567, url: "https://quickswap.exchange" },
+            { rank: 117, name: "Thena", type: "DEX", volume: "0.04B", pairs: 234, url: "https://thena.fi" },
+            { rank: 118, name: "Wombat Exchange", type: "DEX", volume: "0.02B", pairs: 156, url: "https://wombat.exchange" },
+            { rank: 119, name: "Frax Finance", type: "DEX", volume: "0.08B", pairs: 89, url: "https://frax.finance" },
+            { rank: 120, name: "Gains Network", type: "Derivatives", volume: "0.15B", pairs: 45, url: "https://gains.trade" },
+            { rank: 121, name: "Kwenta", type: "Derivatives", volume: "0.1B", pairs: 34, url: "https://kwenta.eth.limo" },
+            { rank: 122, name: "Vertex", type: "Derivatives", volume: "0.2B", pairs: 23, url: "https://vertexprotocol.com" },
+            { rank: 123, name: "HyperLiquid", type: "Derivatives", volume: "0.5B", pairs: 56, url: "https://hyperliquid.xyz" },
+            { rank: 124, name: "Aevo", type: "Derivatives", volume: "0.3B", pairs: 34, url: "https://www.aevo.xyz" },
+            { rank: 125, name: "Lyra", type: "Derivatives", volume: "0.05B", pairs: 23, url: "https://www.lyra.finance" },
+            { rank: 126, name: "Premia", type: "Derivatives", volume: "0.02B", pairs: 18, url: "https://premia.finance" },
+            { rank: 127, name: "Dopex", type: "Derivatives", volume: "0.03B", pairs: 12, url: "https://www.dopex.io" },
+            { rank: 128, name: "Ribbon Finance", type: "Derivatives", volume: "0.04B", pairs: 15, url: "https://www.ribbon.finance" },
+            { rank: 129, name: "Drift", type: "Derivatives", volume: "0.15B", pairs: 45, url: "https://www.drift.trade" },
+            { rank: 130, name: "Zeta Markets", type: "Derivatives", volume: "0.08B", pairs: 34, url: "https://www.zeta.markets" },
+            { rank: 131, name: "Mango Markets", type: "DEX", volume: "0.02B", pairs: 89, url: "https://mango.markets" },
+            { rank: 132, name: "Serum", type: "DEX", volume: "0.01B", pairs: 234, url: "https://www.projectserum.com" },
+            { rank: 133, name: "Phoenix", type: "DEX", volume: "0.03B", pairs: 56, url: "https://www.phoenix.trade" },
+            { rank: 134, name: "Openbook", type: "DEX", volume: "0.02B", pairs: 123, url: "https://openbookdex.com" },
+            { rank: 135, name: "Lifinity", type: "DEX", volume: "0.04B", pairs: 67, url: "https://lifinity.io" },
+            { rank: 136, name: "Marinade", type: "DEX", volume: "0.05B", pairs: 23, url: "https://marinade.finance" },
+            { rank: 137, name: "Tulip", type: "DEX", volume: "0.01B", pairs: 45, url: "https://tulip.garden" },
+            { rank: 138, name: "Francium", type: "DEX", volume: "0.01B", pairs: 34, url: "https://francium.io" },
+            { rank: 139, name: "Step Finance", type: "DEX", volume: "0.005B", pairs: 178, url: "https://step.finance" },
+            { rank: 140, name: "Bitpanda", type: "CEX", volume: "0.15B", pairs: 345, url: "https://www.bitpanda.com" },
+            { rank: 141, name: "Swissborg", type: "CEX", volume: "0.08B", pairs: 123, url: "https://swissborg.com" },
+            { rank: 142, name: "Bitvavo", type: "CEX", volume: "0.12B", pairs: 234, url: "https://bitvavo.com" },
+            { rank: 143, name: "Paymium", type: "CEX", volume: "0.01B", pairs: 12, url: "https://www.paymium.com" },
+            { rank: 144, name: "Bitpanda Pro", type: "CEX", volume: "0.05B", pairs: 89, url: "https://exchange.bitpanda.com" },
+            { rank: 145, name: "Bity", type: "CEX", volume: "0.02B", pairs: 34, url: "https://bity.com" },
+            { rank: 146, name: "Relai", type: "CEX", volume: "0.03B", pairs: 5, url: "https://relai.app" },
+            { rank: 147, name: "Mt Pelerin", type: "CEX", volume: "0.01B", pairs: 45, url: "https://www.mtpelerin.com" },
+            { rank: 148, name: "Bit2Me", type: "CEX", volume: "0.04B", pairs: 156, url: "https://bit2me.com" },
+            { rank: 149, name: "Kriptomat", type: "CEX", volume: "0.03B", pairs: 234, url: "https://kriptomat.io" },
+            { rank: 150, name: "Coinsmart", type: "CEX", volume: "0.02B", pairs: 67, url: "https://www.coinsmart.com" },
+            { rank: 151, name: "Latoken", type: "CEX", volume: "0.4B", pairs: 789, url: "https://latoken.com" },
+            { rank: 152, name: "HitBTC", type: "CEX", volume: "0.3B", pairs: 1234, url: "https://hitbtc.com" },
+            { rank: 153, name: "StormGain", type: "CEX", volume: "0.2B", pairs: 234, url: "https://stormgain.com" },
+            { rank: 154, name: "Currency.com", type: "CEX", volume: "0.1B", pairs: 345, url: "https://currency.com" },
+            { rank: 155, name: "FTX", type: "CEX", volume: "0B", pairs: 0, url: "https://ftx.com" },
+            { rank: 156, name: "BlockFi", type: "CEX", volume: "0B", pairs: 0, url: "https://blockfi.com" },
+            { rank: 157, name: "Voyager", type: "CEX", volume: "0B", pairs: 0, url: "https://www.investvoyager.com" },
+            { rank: 158, name: "Celsius", type: "CEX", volume: "0B", pairs: 0, url: "https://celsius.network" },
+            { rank: 159, name: "AAX", type: "CEX", volume: "0B", pairs: 0, url: "https://www.aax.com" },
+            { rank: 160, name: "ZB.com", type: "CEX", volume: "0.5B", pairs: 567, url: "https://www.zb.com" },
+            { rank: 161, name: "Hotbit", type: "CEX", volume: "0B", pairs: 0, url: "https://www.hotbit.io" },
+            { rank: 162, name: "BitMax", type: "CEX", volume: "0.2B", pairs: 456, url: "https://ascendex.com" },
+            { rank: 163, name: "ZBG", type: "CEX", volume: "0.15B", pairs: 345, url: "https://www.zbg.com" },
+            { rank: 164, name: "Dcoin", type: "CEX", volume: "0.1B", pairs: 234, url: "https://www.dcoin.com" },
+            { rank: 165, name: "Catex", type: "CEX", volume: "0.08B", pairs: 178, url: "https://www.catex.io" },
+            { rank: 166, name: "CoinTiger", type: "CEX", volume: "0.12B", pairs: 345, url: "https://www.cointiger.com" },
+            { rank: 167, name: "Bkex", type: "CEX", volume: "0.2B", pairs: 456, url: "https://www.bkex.com" },
+            { rank: 168, name: "Azbit", type: "CEX", volume: "0.05B", pairs: 123, url: "https://azbit.com" },
+            { rank: 169, name: "Bitay", type: "CEX", volume: "0.03B", pairs: 89, url: "https://www.bitay.com" },
+            { rank: 170, name: "Coinmetro", type: "CEX", volume: "0.02B", pairs: 67, url: "https://coinmetro.com" },
+            { rank: 171, name: "Bylaunch", type: "CEX", volume: "0.01B", pairs: 34, url: "https://bylaunch.com" },
+            { rank: 172, name: "Txbit", type: "CEX", volume: "0.02B", pairs: 56, url: "https://txbit.io" },
+            { rank: 173, name: "Alterdice", type: "CEX", volume: "0.04B", pairs: 123, url: "https://alterdice.com" },
+            { rank: 174, name: "Safe.Trade", type: "CEX", volume: "0.01B", pairs: 89, url: "https://safe.trade" },
+            { rank: 175, name: "TradeOgre", type: "CEX", volume: "0.02B", pairs: 145, url: "https://tradeogre.com" },
+            { rank: 176, name: "SouthXchange", type: "CEX", volume: "0.01B", pairs: 234, url: "https://www.southxchange.com" },
+            { rank: 177, name: "Graviex", type: "CEX", volume: "0.005B", pairs: 178, url: "https://graviex.net" },
+            { rank: 178, name: "Finexbox", type: "CEX", volume: "0.01B", pairs: 189, url: "https://www.finexbox.com" },
+            { rank: 179, name: "Crex24", type: "CEX", volume: "0.02B", pairs: 567, url: "https://crex24.com" },
+            { rank: 180, name: "FreiExchange", type: "CEX", volume: "0.003B", pairs: 45, url: "https://freiexchange.com" },
+            { rank: 181, name: "Xeggex", type: "CEX", volume: "0.02B", pairs: 234, url: "https://xeggex.com" },
+            { rank: 182, name: "NonKYC", type: "CEX", volume: "0.01B", pairs: 156, url: "https://nonkyc.io" },
+            { rank: 183, name: "Exbitron", type: "CEX", volume: "0.005B", pairs: 89, url: "https://exbitron.com" },
+            { rank: 184, name: "Nami Exchange", type: "CEX", volume: "0.02B", pairs: 67, url: "https://nami.exchange" },
+            { rank: 185, name: "MAX Exchange", type: "CEX", volume: "0.1B", pairs: 123, url: "https://max.maicoin.com" },
+            { rank: 186, name: "Bitbank", type: "CEX", volume: "0.15B", pairs: 34, url: "https://bitbank.cc" },
+            { rank: 187, name: "GMO Coin", type: "CEX", volume: "0.08B", pairs: 45, url: "https://coin.z.com" },
+            { rank: 188, name: "DMM Bitcoin", type: "CEX", volume: "0.06B", pairs: 23, url: "https://bitcoin.dmm.com" },
+            { rank: 189, name: "Liquid", type: "CEX", volume: "0.05B", pairs: 156, url: "https://www.liquid.com" },
+            { rank: 190, name: "SBI VC Trade", type: "CEX", volume: "0.04B", pairs: 34, url: "https://www.sbivc.co.jp" },
+            { rank: 191, name: "bitFlyer Lightning", type: "CEX", volume: "0.2B", pairs: 12, url: "https://lightning.bitflyer.com" },
+            { rank: 192, name: "Bitfront", type: "CEX", volume: "0.03B", pairs: 67, url: "https://www.bitfront.me" },
+            { rank: 193, name: "Gopax", type: "CEX", volume: "0.1B", pairs: 89, url: "https://www.gopax.co.kr" },
+            { rank: 194, name: "Flybit", type: "CEX", volume: "0.02B", pairs: 45, url: "https://flybit.com" },
+            { rank: 195, name: "Coinness", type: "CEX", volume: "0.01B", pairs: 34, url: "https://coinness.com" },
+            { rank: 196, name: "Tokocrypto", type: "CEX", volume: "0.08B", pairs: 234, url: "https://www.tokocrypto.com" },
+            { rank: 197, name: "Indodax", type: "CEX", volume: "0.12B", pairs: 189, url: "https://indodax.com" },
+            { rank: 198, name: "Pintu", type: "CEX", volume: "0.03B", pairs: 67, url: "https://pintu.co.id" },
+            { rank: 199, name: "Zipmex", type: "CEX", volume: "0.02B", pairs: 89, url: "https://zipmex.com" },
+            { rank: 200, name: "Bitkub", type: "CEX", volume: "0.15B", pairs: 156, url: "https://www.bitkub.com" },
+            { rank: 201, name: "Satang Pro", type: "CEX", volume: "0.01B", pairs: 45, url: "https://satang.pro" },
+            { rank: 202, name: "Coins.ph", type: "CEX", volume: "0.02B", pairs: 34, url: "https://coins.ph" },
+            { rank: 203, name: "PDAX", type: "CEX", volume: "0.03B", pairs: 56, url: "https://pdax.ph" },
+            { rank: 204, name: "Coinhako", type: "CEX", volume: "0.04B", pairs: 89, url: "https://www.coinhako.com" },
+            { rank: 205, name: "DIFX", type: "CEX", volume: "0.02B", pairs: 67, url: "https://www.difx.com" },
+            { rank: 206, name: "Bitazza", type: "CEX", volume: "0.01B", pairs: 45, url: "https://www.bitazza.com" },
+            { rank: 207, name: "Tokenize Xchange", type: "CEX", volume: "0.02B", pairs: 78, url: "https://tokenize.exchange" },
+            { rank: 208, name: "ACE Exchange", type: "CEX", volume: "0.03B", pairs: 89, url: "https://ace.io" },
+            { rank: 209, name: "ProEX", type: "CEX", volume: "0.01B", pairs: 34, url: "https://www.proex.io" },
+            { rank: 210, name: "Bitay", type: "CEX", volume: "0.02B", pairs: 56, url: "https://www.bitay.com" },
+            { rank: 211, name: "PointPay", type: "CEX", volume: "0.03B", pairs: 123, url: "https://pointpay.io" },
+            { rank: 212, name: "Bitexen", type: "CEX", volume: "0.04B", pairs: 89, url: "https://www.bitexen.com" },
+            { rank: 213, name: "Icrypex", type: "CEX", volume: "0.02B", pairs: 67, url: "https://www.icrypex.com" },
+            { rank: 214, name: "Cex.io Broker", type: "CEX", volume: "0.03B", pairs: 45, url: "https://cex.io" },
+            { rank: 215, name: "Changelly Pro", type: "CEX", volume: "0.05B", pairs: 234, url: "https://pro.changelly.com" },
+            { rank: 216, name: "ChangeNOW", type: "DEX", volume: "0.04B", pairs: 789, url: "https://changenow.io" },
+            { rank: 217, name: "SimpleSwap", type: "DEX", volume: "0.03B", pairs: 567, url: "https://simpleswap.io" },
+            { rank: 218, name: "StealthEX", type: "DEX", volume: "0.02B", pairs: 456, url: "https://stealthex.io" },
+            { rank: 219, name: "Swapzone", type: "DEX", volume: "0.01B", pairs: 345, url: "https://swapzone.io" },
+            { rank: 220, name: "Exolix", type: "DEX", volume: "0.02B", pairs: 234, url: "https://exolix.com" },
+            { rank: 221, name: "FixedFloat", type: "DEX", volume: "0.03B", pairs: 178, url: "https://fixedfloat.com" },
+            { rank: 222, name: "Godex", type: "DEX", volume: "0.01B", pairs: 234, url: "https://godex.io" },
+            { rank: 223, name: "LetsExchange", type: "DEX", volume: "0.02B", pairs: 189, url: "https://letsexchange.io" },
+            { rank: 224, name: "Rubic", type: "DEX", volume: "0.04B", pairs: 567, url: "https://rubic.exchange" },
+            { rank: 225, name: "Rango Exchange", type: "DEX", volume: "0.03B", pairs: 456, url: "https://rango.exchange" },
+            { rank: 226, name: "Via Protocol", type: "DEX", volume: "0.02B", pairs: 345, url: "https://via.exchange" },
+            { rank: 227, name: "LI.FI", type: "DEX", volume: "0.05B", pairs: 678, url: "https://li.fi" },
+            { rank: 228, name: "Socket", type: "DEX", volume: "0.04B", pairs: 456, url: "https://socket.tech" },
+            { rank: 229, name: "Squid Router", type: "DEX", volume: "0.03B", pairs: 234, url: "https://www.squidrouter.com" },
+            { rank: 230, name: "Stargate", type: "DEX", volume: "0.08B", pairs: 89, url: "https://stargate.finance" },
+            { rank: 231, name: "Synapse", type: "DEX", volume: "0.05B", pairs: 67, url: "https://synapseprotocol.com" },
+            { rank: 232, name: "Hop Protocol", type: "DEX", volume: "0.03B", pairs: 45, url: "https://hop.exchange" },
+            { rank: 233, name: "Across Protocol", type: "DEX", volume: "0.04B", pairs: 34, url: "https://across.to" },
+            { rank: 234, name: "Celer cBridge", type: "DEX", volume: "0.03B", pairs: 56, url: "https://cbridge.celer.network" },
+            { rank: 235, name: "Multichain", type: "DEX", volume: "0B", pairs: 0, url: "https://multichain.org" },
+            { rank: 236, name: "Portal Bridge", type: "DEX", volume: "0.02B", pairs: 89, url: "https://portalbridge.com" },
+            { rank: 237, name: "Allbridge", type: "DEX", volume: "0.01B", pairs: 67, url: "https://allbridge.io" },
+            { rank: 238, name: "deBridge", type: "DEX", volume: "0.03B", pairs: 123, url: "https://debridge.finance" },
+            { rank: 239, name: "LayerZero", type: "DEX", volume: "0.05B", pairs: 234, url: "https://layerzero.network" },
+            { rank: 240, name: "Axelar", type: "DEX", volume: "0.04B", pairs: 178, url: "https://axelar.network" },
+            { rank: 241, name: "Wormhole", type: "DEX", volume: "0.06B", pairs: 145, url: "https://wormhole.com" },
+            { rank: 242, name: "THORSwap", type: "DEX", volume: "0.08B", pairs: 56, url: "https://app.thorswap.finance" },
+            { rank: 243, name: "Maya Protocol", type: "DEX", volume: "0.02B", pairs: 34, url: "https://mayaprotocol.com" },
+            { rank: 244, name: "Chainflip", type: "DEX", volume: "0.01B", pairs: 23, url: "https://chainflip.io" },
+            { rank: 245, name: "Transit Finance", type: "DEX", volume: "0.02B", pairs: 345, url: "https://transit.finance" },
+            { rank: 246, name: "XY Finance", type: "DEX", volume: "0.01B", pairs: 234, url: "https://xy.finance" },
+            { rank: 247, name: "Symbiosis", type: "DEX", volume: "0.02B", pairs: 189, url: "https://symbiosis.finance" },
+            { rank: 248, name: "Interport", type: "DEX", volume: "0.01B", pairs: 123, url: "https://interport.fi" },
+            { rank: 249, name: "Bungee", type: "DEX", volume: "0.03B", pairs: 456, url: "https://bungee.exchange" },
+            { rank: 250, name: "Jumper Exchange", type: "DEX", volume: "0.04B", pairs: 567, url: "https://jumper.exchange" }
+        ];
+
+        // Render exchanges
+        function renderExchanges(filter = 'all') {
+            const grid = document.getElementById('exchangesGrid');
+            grid.innerHTML = '';
+
+            let filtered = exchanges;
+            if (filter === 'cex') {
+                filtered = exchanges.filter(e => e.type === 'CEX');
+            } else if (filter === 'dex') {
+                filtered = exchanges.filter(e => e.type === 'DEX');
+            } else if (filter === 'derivatives') {
+                filtered = exchanges.filter(e => e.type === 'Derivatives');
+            }
+
+            filtered.forEach(exchange => {
+                const card = document.createElement('div');
+                card.className = 'exchange-card';
+                card.innerHTML = `
+                    <div class="exchange-rank">#${exchange.rank}</div>
+                    <div class="exchange-name">${exchange.name}</div>
+                    <div class="exchange-type">${exchange.type}</div>
+                    <div class="exchange-info">
+                        <div class="exchange-info-item">
+                            <div class="exchange-info-value">$${exchange.volume}</div>
+                            <div class="exchange-info-label">24H VOLUME</div>
+                        </div>
+                        <div class="exchange-info-item">
+                            <div class="exchange-info-value">${exchange.pairs}</div>
+                            <div class="exchange-info-label">PAIRS</div>
+                        </div>
+                    </div>
+                    <a href="${exchange.url}" target="_blank" rel="noopener" class="exchange-link">
+                        ACCESS EXCHANGE &gt;
+                    </a>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filter tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                renderExchanges(tab.dataset.filter);
+            });
+        });
+
+        // Initial render
+        renderExchanges();
+    </script>
+</body>
+</html>

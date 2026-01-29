@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ON-RAMPS | merch-departament</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;700&family=Black+Ops+One&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #000000;
+            --red: #ff0a0a;
+            --red-dark: #8b0000;
+            --red-glow: rgba(255, 10, 10, 0.6);
+            --green: #00ff41;
+            --white: #ffffff;
+            --moonpay-purple: #7b2cbf;
+            --moonpay-pink: #c77dff;
+            --moonpay-glow: rgba(199, 125, 255, 0.6);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: var(--red);
+            color: #000;
+        }
+
+        /* ========== CYBER BACKGROUND ========== */
+        .cyber-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            opacity: 0.3;
+        }
+
+        .cyber-grid {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background-image:
+                linear-gradient(var(--red) 1px, transparent 1px),
+                linear-gradient(90deg, var(--red) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            opacity: 0.1;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(50px, 50px) rotate(1deg); }
+        }
+
+        .cyber-circle {
+            position: absolute;
+            border: 2px solid var(--red);
+            border-radius: 50%;
+            animation: cyberRotate 10s linear infinite;
+        }
+
+        .cyber-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 5%;
+        }
+
+        .cyber-circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 10%;
+            animation-direction: reverse;
+        }
+
+        .cyber-circle:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            left: 15%;
+            animation-duration: 15s;
+        }
+
+        .cyber-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--red), transparent);
+            animation: scanLine 4s linear infinite;
+        }
+
+        .cyber-line:nth-child(4) {
+            width: 100%;
+            top: 20%;
+        }
+
+        .cyber-line:nth-child(5) {
+            width: 100%;
+            top: 50%;
+            animation-delay: 2s;
+        }
+
+        .cyber-line:nth-child(6) {
+            width: 100%;
+            top: 80%;
+            animation-delay: 1s;
+        }
+
+        @keyframes cyberRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes scanLine {
+            0% { transform: translateX(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Scanlines */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.08) 0px,
+                rgba(0, 0, 0, 0.08) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+        }
+
+        /* ========== HEADER ========== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 40px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #111;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Black Ops One', cursive;
+            font-size: 18px;
+            color: var(--red);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px var(--red-glow);
+            text-decoration: none;
+        }
+
+        .page-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            color: #444;
+            letter-spacing: 5px;
+        }
+
+        .back-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 10px 25px;
+            background: transparent;
+            border: 1px solid #333;
+            color: #666;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            border-color: var(--red);
+            color: var(--red);
+            box-shadow: 0 0 20px var(--red-glow);
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main {
+            position: relative;
+            z-index: 10;
+            padding: 120px 40px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 48px;
+            color: var(--white);
+            letter-spacing: 5px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #444;
+            letter-spacing: 3px;
+        }
+
+        /* ========== ON-RAMPS GRID ========== */
+        .onramps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .onramp-card {
+            background: linear-gradient(180deg, #080808 0%, #000 100%);
+            border: 1px solid #151515;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+            text-decoration: none;
+            display: block;
+            min-height: 200px;
+        }
+
+        .onramp-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--red);
+            transition: width 0.4s;
+        }
+
+        .onramp-card:hover {
+            border-color: #222;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .onramp-card:hover::before {
+            width: 100%;
+        }
+
+        .onramp-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .onramp-desc {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .onramp-status {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--green);
+            letter-spacing: 2px;
+        }
+
+        .onramp-status.offline {
+            color: var(--red);
+        }
+
+        /* Decode effect overlay */
+        .decode-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .onramp-card:hover .decode-overlay {
+            opacity: 0.9;
+        }
+
+        .decode-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--green);
+            letter-spacing: 3px;
+        }
+
+        /* ========== MOONPAY SPECIAL CARD ========== */
+        .moonpay-card {
+            background: linear-gradient(135deg, #1a0a2e 0%, #0d0015 100%);
+            border-color: #2a1a4a;
+        }
+
+        .moonpay-card::before {
+            background: linear-gradient(90deg, var(--moonpay-purple), var(--moonpay-pink));
+        }
+
+        .moonpay-card:hover {
+            border-color: var(--moonpay-purple);
+            box-shadow: 0 10px 40px rgba(123, 44, 191, 0.3);
+        }
+
+        .moonpay-card .onramp-name {
+            background: linear-gradient(90deg, var(--moonpay-purple), var(--moonpay-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .moonpay-card .decode-overlay {
+            background: linear-gradient(135deg, #1a0a2e 0%, #0d0015 100%);
+        }
+
+        .moonpay-card .decode-text {
+            color: var(--moonpay-pink);
+        }
+
+        /* Moon icon for Moonpay */
+        .moon-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--moonpay-purple);
+            border-radius: 50%;
+            opacity: 0.5;
+            transition: all 0.3s;
+        }
+
+        .moonpay-card:hover .moon-icon {
+            opacity: 1;
+            box-shadow: 0 0 20px var(--moonpay-glow);
+            animation: moonGlow 1s infinite;
+        }
+
+        @keyframes moonGlow {
+            0%, 100% { box-shadow: 0 0 20px var(--moonpay-glow); }
+            50% { box-shadow: 0 0 40px var(--moonpay-glow), 0 0 60px var(--moonpay-glow); }
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            position: relative;
+            z-index: 10;
+            padding: 30px 40px;
+            border-top: 1px solid #111;
+            text-align: center;
+        }
+
+        .footer-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #222;
+            letter-spacing: 2px;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .header { padding: 15px 20px; }
+            .logo { font-size: 14px; }
+            .main { padding: 100px 20px 40px; }
+            .section-title { font-size: 32px; }
+            .onramps-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+
+    <!-- Cyber Background -->
+    <div class="cyber-bg">
+        <div class="cyber-grid"></div>
+        <div class="cyber-circle"></div>
+        <div class="cyber-circle"></div>
+        <div class="cyber-circle"></div>
+        <div class="cyber-line"></div>
+        <div class="cyber-line"></div>
+        <div class="cyber-line"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="index.html" class="logo">merch-departament</a>
+        <span class="page-title">// ON-RAMPS DATABASE</span>
+        <a href="index.html" class="back-btn">[ BACK ]</a>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="section-header">
+            <h1 class="section-title">ON-RAMPS</h1>
+            <p class="section-subtitle">CRYPTO PAYMENT GATEWAY INTELLIGENCE</p>
+        </div>
+
+        <div class="onramps-grid">
+            <!-- Moonpay - Special Card -->
+            <a href="moonpay.html" class="onramp-card moonpay-card">
+                <div class="moon-icon"></div>
+                <h3 class="onramp-name">MOONPAY</h3>
+                <p class="onramp-desc">Premium crypto on-ramp. Credit card purchases, bank transfers. High limits, global coverage.</p>
+                <span class="onramp-status">STATUS: ACTIVE</span>
+                <div class="decode-overlay">
+                    <span class="decode-text">[ ACCESSING... ]</span>
+                </div>
+            </a>
+
+            <!-- Transak -->
+            <a href="transak.html" class="onramp-card">
+                <h3 class="onramp-name">TRANSAK</h3>
+                <p class="onramp-desc">Fiat-to-crypto gateway. Multiple payment methods. Developer-friendly API.</p>
+                <span class="onramp-status">STATUS: ACTIVE</span>
+                <div class="decode-overlay">
+                    <span class="decode-text">[ ACCESSING... ]</span>
+                </div>
+            </a>
+
+            <!-- Simplex -->
+            <a href="simplex.html" class="onramp-card">
+                <h3 class="onramp-name">SIMPLEX</h3>
+                <p class="onramp-desc">Fraud-free payment processing. Instant crypto purchases. Wide exchange support.</p>
+                <span class="onramp-status">STATUS: ACTIVE</span>
+                <div class="decode-overlay">
+                    <span class="decode-text">[ ACCESSING... ]</span>
+                </div>
+            </a>
+
+            <!-- Wyre -->
+            <a href="#" class="onramp-card">
+                <h3 class="onramp-name">WYRE</h3>
+                <p class="onramp-desc">Compliant crypto infrastructure. Bank transfers and debit cards. US focused.</p>
+                <span class="onramp-status offline">STATUS: DEPRECATED</span>
+                <div class="decode-overlay">
+                    <span class="decode-text">[ OFFLINE ]</span>
+                </div>
+            </a>
+
+            <!-- Ramp -->
+            <a href="ramp.html" class="onramp-card">
+                <h3 class="onramp-name">RAMP</h3>
+                <p class="onramp-desc">European on-ramp solution. Open banking integration. Low fees.</p>
+                <span class="onramp-status">STATUS: ACTIVE</span>
+                <div class="decode-overlay">
+                    <span class="decode-text">[ ACCESSING... ]</span>
+                </div>
+            </a>
+
+            <!-- Banxa -->
+            <a href="banxa.html" class="onramp-card">
+                <h3 class="onramp-name">BANXA</h3>
+                <p class="onramp-desc">Australian crypto gateway. Local payment methods. Compliance focused.</p>
+                <span class="onramp-status">STATUS: ACTIVE</span>
+                <div class="decode-overlay">
+                    <span class="decode-text">[ ACCESSING... ]</span>
+                </div>
+            </a>
+
+            <!-- Sardine -->
+            <a href="sardine.html" class="onramp-card">
+                <h3 class="onramp-name">SARDINE</h3>
+                <p class="onramp-desc">Fraud prevention + on-ramp. Risk scoring engine. Enterprise solutions.</p>
+                <span class="onramp-status">STATUS: ACTIVE</span>
+                <div class="decode-overlay">
+                    <span class="decode-text">[ ACCESSING... ]</span>
+                </div>
+            </a>
+
+            <!-- Alchemy Pay -->
+            <a href="alchemypay.html" class="onramp-card">
+                <h3 class="onramp-name">ALCHEMY PAY</h3>
+                <p class="onramp-desc">Asia-Pacific gateway. Hybrid fiat-crypto payments. Wide merchant network.</p>
+                <span class="onramp-status">STATUS: ACTIVE</span>
+                <div class="decode-overlay">
+                    <span class="decode-text">[ ACCESSING... ]</span>
+                </div>
+            </a>
+
+            <!-- Coming Soon -->
+            <div class="onramp-card" style="opacity: 0.5; pointer-events: none;">
+                <h3 class="onramp-name">+ MORE</h3>
+                <p class="onramp-desc">Additional on-ramps being indexed. Database expanding...</p>
+                <span class="onramp-status offline">STATUS: PENDING</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">© 20XX MERCH-DEPARTAMENT // ON-RAMPS DIVISION</p>
+    </footer>
+
+    <script>
+        // Decode animation on hover
+        document.querySelectorAll('.onramp-card').forEach(card => {
+            const decodeText = card.querySelector('.decode-text');
+            if (!decodeText) return;
+
+            const originalText = decodeText.textContent;
+            const chars = '01!@#$%^&*<>[]{}|/\\';
+            let interval;
+
+            card.addEventListener('mouseenter', () => {
+                let iterations = 0;
+                interval = setInterval(() => {
+                    decodeText.textContent = originalText
+                        .split('')
+                        .map((char, idx) => {
+                            if (idx < iterations || char === ' ' || char === '[' || char === ']' || char === '.') {
+                                return char;
+                            }
+                            return chars[Math.floor(Math.random() * chars.length)];
+                        })
+                        .join('');
+
+                    iterations += 0.5;
+                    if (iterations > originalText.length) {
+                        clearInterval(interval);
+                    }
+                }, 30);
+            });
+
+            card.addEventListener('mouseleave', () => {
+                clearInterval(interval);
+                decodeText.textContent = originalText;
+            });
+        });
+    </script>
+</body>
+</html>
