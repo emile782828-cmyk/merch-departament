@@ -1256,20 +1256,21 @@
             document.getElementById('userTitle').textContent = getTitle(user);
             document.getElementById('memberSince').textContent = formatDate(user.registeredAt);
 
-            // Check for custom display rank or use calculated rank
-            const displayRank = (customData && customData.displayRank) || user.customRank || getRank(user.searches || 0);
+            // Firebase data takes priority over hardcoded CUSTOM_RANKS
+            // Check for custom display rank: Firebase first, then hardcoded, then calculated
+            const displayRank = user.customRank || (customData && customData.displayRank) || getRank(user.searches || 0);
             document.getElementById('userRank').textContent = displayRank;
             document.getElementById('userId').textContent = user.id;
 
-            // Apply custom styling (from hardcoded CUSTOM_RANKS or from Firebase user data)
-            const hasShimmer = (customData && customData.shimmer) || user.shimmerEffect;
-            const customBadge = (customData && customData.rank) || user.customBadge;
+            // Apply custom styling - Firebase data takes priority
+            const hasShimmer = user.shimmerEffect !== undefined ? user.shimmerEffect : (customData && customData.shimmer);
+            const badgeText = user.customBadge || (customData && customData.rank);
 
             if (hasShimmer) {
                 nicknameEl.classList.add('shimmer');
             }
-            if (customBadge) {
-                customRankEl.textContent = customBadge;
+            if (badgeText) {
+                customRankEl.textContent = badgeText;
                 customRankEl.style.display = 'inline-block';
             }
 
